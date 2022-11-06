@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <title>Sistema de turnos</title>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <!-- Apta para cualquier dispositivo movil-->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="./FilesCSS/bootstrap.min.css"> 
+    <link rel="stylesheet" href="./FilesCSS/Estilo1.css"> 
+</head>
+<body>
+    <div class="container-fluid">        
+        <div class="row">
+            <h1 class="colorH">Sistema de turnos</h1>
+        </div>
+        <!-- Tamaño < 576 muestra 1 col, tamaño >=576 2 col(para que el mapa se vea bien) -->
+        <div class="row row-cols-xs-1 row-cols-sm-2">
+            <div id = "col_formulario">
+                <form  name="Solicitud de turno" id="sol_turnos">
+                    <div class ="row justify-content-center separacion" id = espacio_email>
+                        <label for="email" id="email">Email:</label>
+                        <input class = form-control type="email" placeholder="name@example.com">
+                    </div>
+                    <div class = "row justify-content-center separacion" id = espacio_sucursal>
+                        <label for="select_sucursal">Selecciona una sucursal:</label>
+                        <select name="" id="select_sucursal" class="form-select">
+                            <option selected>Sin especificar</option>
+                        </select>
+                    </div>
+                    <div class = "row justify-content-center separacion">
+                        <label for="startDate">Seleccione una fecha:</label>
+                        <input id="startDate" class="form-control" type="datetime-local"/>
+                        <span id="startDateSelected"></span>
+                    </div>
+                    <div class="row separacion">
+                        <input type="submit" id="buscar_turno" class="btn btn-primary" disabled value="Buscar turno">
+                    </div>
+                </form>
+            </div>
+            <div class="colorB" id="col_mapa">
+                <p>Aca va el mapa</p>
+            </div>
+        </div>
+    </div>    
+    <script src="./FilesJS/bootstrap.min.js"></script>
+    <script src="./FilesJS/main.js"></script>
+</body>
+</html>

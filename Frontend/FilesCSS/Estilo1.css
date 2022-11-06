@@ -1,0 +1,24 @@
+.colorH{
+    background-color: #0E2B6E;
+    color: white;
+    text-align: center;
+}
+.colorF{
+    background-color: aqua;
+}
+.colorB{
+    background-color: whitesmoke;
+}
+#col_formulario{
+    border: 2px solid black;
+    background-color: #6790F0;
+    height: 70vh;
+}
+#sol_turnos{
+    width:50%;
+    margin: 0 auto;
+}
+
+.separacion{
+    padding: 2vh;
+}
