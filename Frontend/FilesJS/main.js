@@ -32,10 +32,26 @@ addEventListener("load", () =>{
    }
 })
 
-const email = document.getElementById("email").value
-console.log("El mail es: ", email)
+//Habilito boton para buscar turno, siempre y cuando tenga todo completo
+
+function habilitar(){
+    let email = document.getElementById("email").value
+    let sucursal = document.getElementById("select_sucursal").value
+    let fecha = document.getElementById("fechayhora").value
+    let habilita = false
+
+    if(email != "" && sucursal != "" && sucursal != "Sin especificar")
+        habilita = true
+    
+    let res = (habilita)? document.getElementById("buscar_turno").disabled = false :  document.getElementById("buscar_turno").disabled = true
+}
+
+document.getElementById("email").addEventListener("keyup", habilitar)
+document.getElementById("select_sucursal").addEventListener("change",habilitar)
+document.getElementById("fechayhora").addEventListener("change",habilitar)
 
 
+//Para cuando tenga que hacer el post
 document.getElementById().addEventListener("click", (evt) =>{
     evt.preventDefault();
     let 
@@ -70,7 +86,7 @@ const request2 = fetch(URI_adventure,{
     headers:{
         "Content-Type": "application/json"
     },
-    body: JSON.stringify({name: "Lucas", age: 23})
+    body: JSON.stringify({})
 })
 */
 

@@ -19,8 +19,8 @@
             <div id = "col_formulario">
                 <form  name="Solicitud de turno" id="sol_turnos">
                     <div class ="row justify-content-center separacion" id = espacio_email>
-                        <label for="email" id="email">Email:</label>
-                        <input class = form-control type="email" placeholder="name@example.com">
+                        <label for="email"">Email:</label>
+                        <input class = form-control id = "email" type="email" placeholder="name@example.com">
                     </div>
                     <div class = "row justify-content-center separacion" id = espacio_sucursal>
                         <label for="select_sucursal">Selecciona una sucursal:</label>
@@ -30,8 +30,7 @@
                     </div>
                     <div class = "row justify-content-center separacion">
                         <label for="startDate">Seleccione una fecha:</label>
-                        <input id="startDate" class="form-control" type="datetime-local"/>
-                        <span id="startDateSelected"></span>
+                        <input id="fechayhora" class="form-control" type="datetime-local"/>
                     </div>
                     <div class="row separacion">
                         <input type="submit" id="buscar_turno" class="btn btn-primary" disabled value="Buscar turno">
