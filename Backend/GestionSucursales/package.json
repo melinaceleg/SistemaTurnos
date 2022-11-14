@@ -1,0 +1,24 @@
+{
+  "name": "gestionsucursales",
+  "version": "1.0.0",
+  "type" : "module",
+  "description": "Microservicio de Gestion de Sucursales",
+  "main": "ControllerSucursal.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/melinaceleg/SistemaTurnos.git"
+  },
+  "keywords": [
+    "Sistemas",
+    "distribuidos"
+  ],
+  "author": "Melina Garcia",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/melinaceleg/SistemaTurnos/issues"
+  },
+  "homepage": "https://github.com/melinaceleg/SistemaTurnos#readme"
+}
