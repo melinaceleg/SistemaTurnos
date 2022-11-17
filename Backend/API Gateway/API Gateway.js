@@ -16,13 +16,13 @@ const server = http.createServer(function (request, response){
             if (peticiones.ComprobarRecurso(recurso, 'api'))
             {
                 request.on('data', function(data) {
-                    peticiones.AltaReserva(data).then(function (result)
+                    peticiones.AltaReserva(data, response).then(function (result)
                     {
                         //enviarNotificacion.enviar(turnos[parametro]);
                         //response.write(resp);
-                        peticiones.enviarRespuesta(response, 200, result);
+                        //peticiones.enviarRespuesta(response, 200, result);
                     }).catch(function(result){
-                        peticiones.enviarRespuesta(response, 400, result);
+                        //peticiones.enviarRespuesta(response, 400, result);
                     });
                 });
             }
@@ -31,24 +31,24 @@ const server = http.createServer(function (request, response){
             if (peticiones.ComprobarRecurso(servicio, ''))
             {
                 request.on('data', function() {
-                    peticiones.GetTurnosUsuario(data).then(function (result)
+                    peticiones.GetTurnosUsuario(data, response).then(function (result)
                     {
                         //response.write(resp);
-                        peticiones.enviarRespuesta(response, 200, result);
+                        //peticiones.enviarRespuesta(response, 200, result);
                     }).catch(function(result){
-                        peticiones.enviarRespuesta(response, 400, result);
+                        //peticiones.enviarRespuesta(response, 400, result);
                     });
                 });
             }
             else if (peticiones.ComprobarRecurso(servicio, 'sucursales'))
             {
                 request.on('data', function() {
-                    peticiones.GetSucursales(data).then(function (result)
+                    peticiones.GetSucursales(data, response).then(function (result)
                     {
                         //response.write(resp);
-                        peticiones.enviarRespuesta(response, 200, result);
+                        //peticiones.enviarRespuesta(response, 200, result);
                     }).catch(function(result){
-                        peticiones.enviarRespuesta(response, 400, result);
+                        //peticiones.enviarRespuesta(response, 400, result);
                     });
                 });
             }

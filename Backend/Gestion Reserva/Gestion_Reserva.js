@@ -19,10 +19,10 @@ manejoTurnos.CargarTurnos().then(function (result)
 });*/
 
 const server = http.createServer(function (request, response){
-
+    //[ '', 'api', 'reservas', 'confirmar', ':idReserva' ]
     dir = request.url.split('/');
-    recurso = dir[1];
-    parametro = dir[2];
+    recurso = dir[3];
+    parametro = dir[4];
 
     switch (request.method)
     {

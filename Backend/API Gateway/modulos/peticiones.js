@@ -1,11 +1,35 @@
-const puertoReservas = 4000;
-const puertoSucursales = '3000'
+const puertoReservas = '4000';
+const puertoSucursales = '3000';
+
+
+async function enviar(data, options, cliente)
+{    
+    const request = http.request(options, function (response) {
+
+        let body = ''
+      
+        console.log('Status Code:', response.statusCode);
+      
+        response.on('data', (chunk) => {
+          body += chunk;
+          enviarRespuesta(cliente, cod, chunk);
+        });
+      
+        response.on('end', () => {
+            console.log('Body: ', body);
+        });
+    });
+      
+    request.write(data);
+    request.end();
+}
+
 
 function ComprobarRecurso(rec, recurso)
 {
     return rec.includes(recurso);
 }
-async function AltaReserva(data, callback)
+async function AltaReserva(data, cliente)
 {
     d = JSON.parse(data);
     if (idReserva <= 0)
@@ -41,7 +65,7 @@ async function AltaReserva(data, callback)
 
     return JSON.stringify('');
 }
-async function GetTurnosUsuario(data)
+async function GetTurnosUsuario(data, cliente)
 {
     let i = 0;
     let len = turnos.length;
@@ -66,7 +90,7 @@ async function GetTurnosUsuario(data)
         res: result
     });
 }
-async function GetSucursales(data)
+async function GetSucursales(data, cliente)
 {
     d = JSON.parse(data);
 
@@ -88,25 +112,9 @@ async function GetSucursales(data)
         }
     };
 
-    const request = http.request(options, function (response) {
+    enviar(data, options, cliente);
 
-        let body = ''
-      
-        console.log('Status Code:', response.statusCode);
-      
-        response.on('data', (chunk) => {
-          body += chunk;
-        });
-      
-        response.on('end', () => {
-            console.log('Body: ', JSON.parse(body));
-        });
-    });
-      
-    request.write(data);
-    request.end();
-
-    return JSON.stringify('');
+    return 1;
 }
 function enviarRespuesta(response, cod, res)
 {
