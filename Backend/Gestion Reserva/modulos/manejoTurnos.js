@@ -69,9 +69,17 @@ function BuscarReserva(turnos, id)
     }
     return i < len? i:-1;
 }
-
-function CargarTurnos()
+function resolveAfter2Seconds() {
+    return new Promise(resolve => {
+      setTimeout(() => {
+        resolve('resolved');
+      }, 2000);
+    });
+  }
+async function CargarTurnos()
 {
+    await resolveAfter2Seconds();
+    console.debug("archivo cargado");
     return JSON.parse(fs.readFileSync('turnos.json', 'utf8'));
 }
 function GuardarTurnos(turnos)
