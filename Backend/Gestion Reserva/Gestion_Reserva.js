@@ -19,7 +19,6 @@ manejoTurnos.CargarTurnos().then(function (result)
 });*/
 
 const server = http.createServer(function (request, response){
-    //[ '', 'api', 'reservas', 'confirmar', ':idReserva' ]
     dir = request.url.split('/');
     recurso = dir[2];
     servicio = dir[3];
@@ -33,8 +32,10 @@ const server = http.createServer(function (request, response){
                 peticiones.AltaReserva(turnos, parametro, data, enviarNotificacion.enviar).then(function (result)
                 {
                     peticiones.enviarRespuesta(response, 200, result);
+                    response.end(res);
                 }).catch(function(result){
                     peticiones.enviarRespuesta(response, 400, result);
+                    response.end(res);
                 });
             }
             else if (peticiones.ComprobarRecurso(servicio, 'solicitar') && servicio == undefined)
@@ -42,8 +43,10 @@ const server = http.createServer(function (request, response){
                 peticiones.VerificarTurno(turnos, parametro).then(function (result)
                 {
                     peticiones.enviarRespuesta(response, 200, result);
+                    response.end(res);
                 }).catch(function(result){
                     peticiones.enviarRespuesta(response, 400, result);
+                    response.end(res);
                 });
             } 
             break;
@@ -52,22 +55,23 @@ const server = http.createServer(function (request, response){
             {
                 peticiones.GetReserva(turnos, parametro).then(function (result)
                 {
-                    //response.write(resp);
                     peticiones.enviarRespuesta(response, 200, result);
+                    response.end(res);
                 }).catch(function(result){
                     peticiones.enviarRespuesta(response, 400, result);
+                    response.end(res);
                 });
             }
             else if (peticiones.ComprobarRecurso(recurso, 'reservas'))
             {
-                //console.debug(url.parse(recurso, true));
                 query = url.parse(request.url, true).query;
                 peticiones.GetReservas(turnos, query).then(function (result)
                 {
-                    //response.write(resp);
                     peticiones.enviarRespuesta(response, 200, result);
+                    response.end(res);
                 }).catch(function(result){
                     peticiones.enviarRespuesta(response, 400, result);
+                    response.end(res);
                 });
             }
 
