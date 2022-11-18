@@ -62,8 +62,9 @@ async function VerificarTurno(turnos, idReserva)
 }
 async function GetReservas(turnos, parametros)
 {
-    let nTurnos;
-    let filtro = turnos;
+    let nTurnos = turnos.filter(function (t) {
+        return t.userId != -20
+    });
     
     let len;
 
@@ -73,10 +74,9 @@ async function GetReservas(turnos, parametros)
     }
     if (parametros.userId != undefined)
     {        
-        nTurnos = filtro.filter(function (t) {
+        nTurnos = nTurnos.filter(function (t) {
             return t.userId == parametros.userId
         });
-        nTurnos = filtro;
     }
     if (parametros.dateTime != undefined)
     {        
@@ -85,14 +85,13 @@ async function GetReservas(turnos, parametros)
             throw 'Error fecha';
         }
 
-        nTurnos = filtro.filter(function (t) {
+        nTurnos = nTurnos.filter(function (t) {
             return t.dateTime.split('T')[0] == parametros.dateTime
         });
-        nTurnos = filtro;
     }
     if (parametros.branchId != undefined)
     {
-        nTurnos = filtro.filter(function (t) {
+        nTurnos = nTurnos.filter(function (t) {
             return t.branchId == parametros.branchId
         });
     }
