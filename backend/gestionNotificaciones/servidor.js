@@ -32,7 +32,6 @@ function handleResponse(req,res){
     var email=''
     res.setHeader('Content-Type', 'application/json;charset=utf-8');
     if(req.url!=='/notificaciones'){
-      console.log(req.url)
       res.writeHead(404)
       res.end(JSON.stringify({'mesageError':'Ruta Incorrecta'}))
     }
@@ -54,8 +53,10 @@ function handleResponse(req,res){
             asunto=data.asunto
             email=data.email
             response=enviar.enviar(data.email,data.asunto,data.msg)
-            res.setHeader('Content-Type', 'application/json;charset=utf-8');
-            res.end(response)
+            if(response.message===undefined){
+              res.writeHead(404)
+            }
+              res.end(JSON.stringify(response))
           }) 
           .on('end', () => { 
             if (pos !== size) { 
