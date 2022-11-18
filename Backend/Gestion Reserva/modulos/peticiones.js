@@ -62,8 +62,9 @@ async function VerificarTurno(turnos, idReserva)
 }
 async function GetReservas(turnos, parametros)
 {
-    let nTurnos = turnos.slice(0);
-    let i;
+    let nTurnos;
+    let filtro = turnos;
+    
     let len;
 
     if (len > 3)
@@ -71,50 +72,29 @@ async function GetReservas(turnos, parametros)
         throw 'Querrys incorrectos';
     }
     if (parametros.userId != undefined)
-    {
-        len = nTurnos.length;
-        for (i = 0; i < len; i++)
-        {
-            if (nTurnos[i].userId != parametros.userId)
-            {
-                nTurnos.splice(i, 1);
-                i--;
-                len--;
-            }
-        }
+    {        
+        nTurnos = filtro.filter(function (t) {
+            return t.userId == parametros.userId
+        });
+        nTurnos = filtro;
     }
     if (parametros.dateTime != undefined)
-    {
-        fecha = nTurnos[i].dateTime.split('T');
-        
-        if (fecha.length != 2)
+    {        
+        if (parametros.dateTime.length != 2)
         {        
             throw 'Error fecha';
         }
 
-        len = nTurnos.length;
-        for (i = 0; i < len; i++)
-        {
-            if (fecha[0] != parametros.dateTime)
-            {
-                nTurnos.splice(i, 1);
-                i--;
-                len--;
-            }
-        }
+        nTurnos = filtro.filter(function (t) {
+            return t.dateTime.split('T')[0] == parametros.dateTime
+        });
+        nTurnos = filtro;
     }
     if (parametros.branchId != undefined)
     {
-        len = nTurnos.length;
-        for (i = 0; i < len; i++)
-        {
-            if (nTurnos[i].branchId != parametros.branchId)
-            {
-                nTurnos.splice(i, 1);
-                i--;
-                len--;
-            }
-        }  
+        nTurnos = filtro.filter(function (t) {
+            return t.branchId == parametros.branchId
+        });
     }
     return JSON.stringify(nTurnos);
 }

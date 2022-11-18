@@ -76,10 +76,10 @@ function resolveAfter2Seconds() {
       }, 2000);
     });
   }
-async function CargarTurnos()
+function CargarTurnos()
 {
-    await resolveAfter2Seconds();
-    console.debug("archivo cargado");
+    //await resolveAfter2Seconds();
+    //console.debug("archivo cargado");
     return JSON.parse(fs.readFileSync('turnos.json', 'utf8'));
 }
 function GuardarTurnos(turnos)
