@@ -9,7 +9,7 @@ function enviar(email,asunto,msg){
       var data = JSON.stringify({
         'personalizations': 
                 [{'to': [{'email': email}]}],
-                'from': {'email': 'erik.nrs@gmail.com'},
+                'from': {'email': process.env.USER_SEND_GRID},
                 'subject': asunto,
                 'content': [{'type': 'text/plain', value: msg}]      
     });
