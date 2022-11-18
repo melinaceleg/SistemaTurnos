@@ -10,31 +10,47 @@ const enviarNotificacion = require('./modulos/enviarNotificacion');
 //manejoTurnos.GuardarTurnos(manejoTurnos.CrearJSON(20, 2022, 09, 02, 10, 00, 30));
 
 let turnos = manejoTurnos.CargarTurnos();
+/*let turnos;
+manejoTurnos.CargarTurnos().then(function (result)
+{
+    turnos = result;
+}).catch(function(result){
+
+});*/
 
 const server = http.createServer(function (request, response){
-
+    //[ '', 'api', 'reservas', 'confirmar', ':idReserva' ]
     dir = request.url.split('/');
-    recurso = dir[1];
-    parametro = dir[2];
+    recurso = dir[2];
+    servicio = dir[3];
+    parametro = dir[4];
 
     switch (request.method)
     {
         case 'POST':
-            if (peticiones.ComprobarRecurso(recurso, 'confirmar'))
+            if (peticiones.ComprobarRecurso(servicio, 'confirmar'))
             {
                 request.on('data', function(data) {
-                    resp = peticiones.AltaReserva(turnos, parametro, data, enviarNotificacion.enviar);
-                    //enviarNotificacion.enviar(turnos[parametro]);
-                    response.write(resp);
-                    response.end();
+                    peticiones.AltaReserva(turnos, parametro, data, enviarNotificacion.enviar).then(function (result)
+                    {
+                        //enviarNotificacion.enviar(turnos[parametro]);
+                        //response.write(resp);
+                        peticiones.enviarRespuesta(response, 200, result);
+                    }).catch(function(result){
+                        peticiones.enviarRespuesta(response, 400, result);
+                    });
                 });
             }
-            else if (peticiones.ComprobarRecurso(recurso, 'solicitar'))
+            else if (peticiones.ComprobarRecurso(servicio, 'solicitar'))
             {
                 request.on('data', function() {
-                    resp = peticiones.VerificarTurno(turnos, parametro);
-                    response.write(resp);
-                    response.end();
+                    peticiones.VerificarTurno(turnos, parametro).then(function (result)
+                    {
+                        //response.write(resp);
+                        peticiones.enviarRespuesta(response, 200, result);
+                    }).catch(function(result){
+                        peticiones.enviarRespuesta(response, 400, result);
+                    });
                 });
             } 
             break;
@@ -42,17 +58,27 @@ const server = http.createServer(function (request, response){
             if (peticiones.ComprobarRecurso(recurso, 'reservas?'))
             {
                 request.on('data', function() {
-                    resp = peticiones.GetReservas(turnos, url.parse(recurso, true).query);
-                    response.write(resp);
-                    response.end();
+                    //console.debug(url.parse(recurso, true));
+                    query = url.parse(request.url, true).query;
+                    peticiones.GetReservas(turnos, query).then(function (result)
+                    {
+                        //response.write(resp);
+                        peticiones.enviarRespuesta(response, 200, result);
+                    }).catch(function(result){
+                        peticiones.enviarRespuesta(response, 400, result);
+                    });
                 });
             }
             else if (peticiones.ComprobarRecurso(recurso, 'reservas'))
             {
                 request.on('data', function() {
-                    resp = peticiones.GetReserva(turnos, parametro);
-                    response.write(resp);
-                    response.end();
+                    peticiones.GetReserva(turnos, parametro).then(function (result)
+                    {
+                        //response.write(resp);
+                        peticiones.enviarRespuesta(response, 200, result);
+                    }).catch(function(result){
+                        peticiones.enviarRespuesta(response, 400, result);
+                    });
                 });
             }
 

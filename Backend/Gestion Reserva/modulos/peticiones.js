@@ -5,15 +5,19 @@ function ComprobarRecurso(rec, recurso)
     return rec.includes(recurso);
     //return rec == recurso;
 }
-function AltaReserva(turnos, idReserva, data, callback)
+async function AltaReserva(turnos, idReserva, data, callback)
 {
     d = JSON.parse(data);
     indice = manejoTurnos.BuscarReserva(turnos, idReserva);
-    if (indice != -1 && turnos[indice].status == 0)
+    if (idReserva <= 0)
+    {        
+        throw 'idReserva erroneo';
+    }
+    if (indice != -1 && turnos[indice].status == 1)
     {
         turnos[indice].email = d.email;
         turnos[indice].userId = d.userId;
-        turnos[indice].status = 1;
+        turnos[indice].status = 2;
         //AgregarTurno(turnos, CrearTurno(idReserva, "2022-09-02T19:58:10.406Z", d.userId, d.email, 3));
         manejoTurnos.GuardarTurnos(turnos);
 
@@ -22,76 +26,90 @@ function AltaReserva(turnos, idReserva, data, callback)
     }
     else
     {
-        console.debug('turno ocupado!');
+        throw 'turno ocupado o status incorrecto';
     }
     return JSON.stringify('');
 }
-function VerificarTurno(turnos, idReserva)
+async function VerificarTurno(turnos, idReserva)
 {
     let i = 0;
     let len = turnos.length;
+    let result = 0;
     //d = JSON.parse(data);
+    if (idReserva <= 0)
+    {        
+        throw 'idReserva erroneo';
+    }
 
     while (i < len && turnos[i].idReserva < idReserva)
     {
         i++;
     }
-
-    return JSON.stringify({
-        res: turnos[i].idReserva == idReserva && turnos[i].status == 0? 1: 0
-    });
-}
-function GetReservas(turnos, parametros)
-{
-    let nTurnos = turnos.slice(0);
-    let i;
-    let len;
-
-    if (parametros.userId != undefined)
+    if (i < len && turnos[i].idReserva == idReserva)
     {
-        len = nTurnos.length;
-        for (i = 0; i < len; i++)
-        {
-            if (nTurnos[i].userId != parametros.userId)
+        await function() {
+            if (turnos[i].status == 0)
             {
-                nTurnos.splice(i, 1);
-                i--;
-                len--;
+                turnos[i].status = 1;
+                result = 1;
             }
         }
     }
+
+    return JSON.stringify({
+        res: result
+    });
+}
+async function GetReservas(turnos, parametros)
+{
+    let nTurnos = turnos.filter(function (t) {
+        return t.userId != -20
+    });
+    
+    let len;
+
+    if (len > 3)
+    {        
+        throw 'Querrys incorrectos';
+    }
+    if (parametros.userId != undefined)
+    {        
+        nTurnos = nTurnos.filter(function (t) {
+            return t.userId == parametros.userId
+        });
+    }
     if (parametros.dateTime != undefined)
-    {
-        len = nTurnos.length;
-        for (i = 0; i < len; i++)
-        {
-            if (nTurnos[i].dateTime != parametros.dateTime)
-            {
-                nTurnos.splice(i, 1);
-                i--;
-                len--;
-            }
+    {        
+        if (parametros.dateTime.length != 2)
+        {        
+            throw 'Error fecha';
         }
+
+        nTurnos = nTurnos.filter(function (t) {
+            return t.dateTime.split('T')[0] == parametros.dateTime
+        });
     }
     if (parametros.branchId != undefined)
     {
-        len = nTurnos.length;
-        for (i = 0; i < len; i++)
-        {
-            if (nTurnos[i].branchId != parametros.branchId)
-            {
-                nTurnos.splice(i, 1);
-                i--;
-                len--;
-            }
-        }  
+        nTurnos = nTurnos.filter(function (t) {
+            return t.branchId == parametros.branchId
+        });
     }
     return JSON.stringify(nTurnos);
 }
-function GetReserva(turnos, idReserva)
+async function GetReserva(turnos, idReserva)
 {
+    if (idReserva <= 0)
+    {        
+        throw 'idReserva erroneo';
+    }
     let indice = manejoTurnos.BuscarReserva(turnos, idReserva);
     return JSON.stringify(indice != -1? turnos[indice]:'');
+}
+function enviarRespuesta(response, cod, res)
+{
+    response.writeHead(cod,{'Content-Type':'application/json'});
+    response.end(res);
 }
 
 module.exports = {
@@ -99,5 +117,6 @@ module.exports = {
     AltaReserva : AltaReserva,
     VerificarTurno : VerificarTurno,
     GetReservas : GetReservas,
-    GetReserva : GetReserva
+    GetReserva : GetReserva,
+    enviarRespuesta : enviarRespuesta
 }
