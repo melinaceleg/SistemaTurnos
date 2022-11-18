@@ -65,13 +65,6 @@ async function GetReservas(turnos, parametros)
     let nTurnos = turnos.filter(function (t) {
         return t.userId != -20
     });
-    
-    let len;
-
-    if (len > 3)
-    {        
-        throw 'Querrys incorrectos';
-    }
     if (parametros.userId != undefined)
     {        
         nTurnos = nTurnos.filter(function (t) {
@@ -108,6 +101,7 @@ async function GetReserva(turnos, idReserva)
 }
 function enviarRespuesta(response, cod, res)
 {
+    console.debug(res);
     response.writeHead(cod,{'Content-Type':'application/json'});
     response.end(res);
 }

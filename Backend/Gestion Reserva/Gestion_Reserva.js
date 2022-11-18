@@ -19,7 +19,6 @@ manejoTurnos.CargarTurnos().then(function (result)
 });*/
 
 const server = http.createServer(function (request, response){
-    //[ '', 'api', 'reservas', 'confirmar', ':idReserva' ]
     dir = request.url.split('/');
     recurso = dir[2];
     servicio = dir[3];
@@ -30,55 +29,49 @@ const server = http.createServer(function (request, response){
         case 'POST':
             if (peticiones.ComprobarRecurso(servicio, 'confirmar'))
             {
-                request.on('data', function(data) {
-                    peticiones.AltaReserva(turnos, parametro, data, enviarNotificacion.enviar).then(function (result)
-                    {
-                        //enviarNotificacion.enviar(turnos[parametro]);
-                        //response.write(resp);
-                        peticiones.enviarRespuesta(response, 200, result);
-                    }).catch(function(result){
-                        peticiones.enviarRespuesta(response, 400, result);
-                    });
+                peticiones.AltaReserva(turnos, parametro, data, enviarNotificacion.enviar).then(function (result)
+                {
+                    peticiones.enviarRespuesta(response, 200, result);
+                    response.end(res);
+                }).catch(function(result){
+                    peticiones.enviarRespuesta(response, 400, result);
+                    response.end(res);
                 });
             }
-            else if (peticiones.ComprobarRecurso(servicio, 'solicitar'))
+            else if (peticiones.ComprobarRecurso(servicio, 'solicitar') && servicio == undefined)
             {
-                request.on('data', function() {
-                    peticiones.VerificarTurno(turnos, parametro).then(function (result)
-                    {
-                        //response.write(resp);
-                        peticiones.enviarRespuesta(response, 200, result);
-                    }).catch(function(result){
-                        peticiones.enviarRespuesta(response, 400, result);
-                    });
+                peticiones.VerificarTurno(turnos, parametro).then(function (result)
+                {
+                    peticiones.enviarRespuesta(response, 200, result);
+                    response.end(res);
+                }).catch(function(result){
+                    peticiones.enviarRespuesta(response, 400, result);
+                    response.end(res);
                 });
             } 
             break;
         case 'GET':
-            if (peticiones.ComprobarRecurso(recurso, 'reservas?'))
+            if (peticiones.ComprobarRecurso(recurso, 'reservas') && parametro != undefined)
             {
-                request.on('data', function() {
-                    //console.debug(url.parse(recurso, true));
-                    query = url.parse(request.url, true).query;
-                    peticiones.GetReservas(turnos, query).then(function (result)
-                    {
-                        //response.write(resp);
-                        peticiones.enviarRespuesta(response, 200, result);
-                    }).catch(function(result){
-                        peticiones.enviarRespuesta(response, 400, result);
-                    });
+                peticiones.GetReserva(turnos, parametro).then(function (result)
+                {
+                    peticiones.enviarRespuesta(response, 200, result);
+                    response.end(res);
+                }).catch(function(result){
+                    peticiones.enviarRespuesta(response, 400, result);
+                    response.end(res);
                 });
             }
             else if (peticiones.ComprobarRecurso(recurso, 'reservas'))
             {
-                request.on('data', function() {
-                    peticiones.GetReserva(turnos, parametro).then(function (result)
-                    {
-                        //response.write(resp);
-                        peticiones.enviarRespuesta(response, 200, result);
-                    }).catch(function(result){
-                        peticiones.enviarRespuesta(response, 400, result);
-                    });
+                query = url.parse(request.url, true).query;
+                peticiones.GetReservas(turnos, query).then(function (result)
+                {
+                    peticiones.enviarRespuesta(response, 200, result);
+                    response.end(res);
+                }).catch(function(result){
+                    peticiones.enviarRespuesta(response, 400, result);
+                    response.end(res);
                 });
             }
 

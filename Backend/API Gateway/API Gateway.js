@@ -1,4 +1,4 @@
-const puerto = 4000
+const puerto = 6000
 
 const http = require('http');
 
@@ -7,49 +7,55 @@ const peticiones = require('./modulos/peticiones');
 const server = http.createServer(function (request, response){
     //[ '', 'api', '' ]
     dir = request.url.split('/');
-    recurso = dir[1];
-    servicio = dir[2];
+    recurso = dir[2];
+    servicio = dir[3];
+    paremtro = dir[4];
 
     switch (request.method)
     {
         case 'POST':
-            if (peticiones.ComprobarRecurso(recurso, 'api'))
+            if (peticiones.ComprobarRecurso(recurso, 'reservas') && peticiones.ComprobarRecurso(servicio, 'confirmar'))
             {
-                request.on('data', function(data) {
-                    peticiones.AltaReserva(data, response).then(function (result)
-                    {
-                        //enviarNotificacion.enviar(turnos[parametro]);
-                        //response.write(resp);
-                        //peticiones.enviarRespuesta(response, 200, result);
-                    }).catch(function(result){
-                        //peticiones.enviarRespuesta(response, 400, result);
-                    });
+                peticiones.AltaReserva(data, request, response).then(function (result)
+                {
+                }).catch(function(result){
+                });
+            }
+            else if (peticiones.ComprobarRecurso(recurso, 'reservas') && peticiones.ComprobarRecurso(servicio, 'confirmar'))
+            {
+                peticiones.VerificarTurno(data, request, response).then(function (result)
+                {
+                }).catch(function(result){
                 });
             }
             break;
         case 'GET':
-            if (peticiones.ComprobarRecurso(servicio, ''))
+            if (peticiones.ComprobarRecurso(recurso, 'reservas') && parametro != undefined)
             {
-                request.on('data', function() {
-                    peticiones.GetTurnosUsuario(data, response).then(function (result)
-                    {
-                        //response.write(resp);
-                        //peticiones.enviarRespuesta(response, 200, result);
-                    }).catch(function(result){
-                        //peticiones.enviarRespuesta(response, 400, result);
-                    });
+                peticiones.GetReserva(data, response).then(function (result)
+                {
+                }).catch(function(result){
                 });
             }
-            else if (peticiones.ComprobarRecurso(servicio, 'sucursales'))
+            else if (peticiones.ComprobarRecurso(recurso, 'reservas'))
             {
-                request.on('data', function() {
-                    peticiones.GetSucursales(data, response).then(function (result)
-                    {
-                        //response.write(resp);
-                        //peticiones.enviarRespuesta(response, 200, result);
-                    }).catch(function(result){
-                        //peticiones.enviarRespuesta(response, 400, result);
-                    });
+                peticiones.GetReservas(data, response).then(function (result)
+                {
+                }).catch(function(result){
+                });
+            }
+            else if (peticiones.ComprobarRecurso(recurso, 'sucursales') && parametro != undefined)
+            {
+                peticiones.GetSucursal(data, request, response).then(function (result)
+                {
+                }).catch(function(result){
+                });
+            }
+            else if (peticiones.ComprobarRecurso(recurso, 'sucursales'))
+            {
+                peticiones.GetSucursales(data, request, response).then(function (result)
+                {
+                }).catch(function(result){
                 });
             }
 
