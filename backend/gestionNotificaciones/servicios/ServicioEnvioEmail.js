@@ -1,6 +1,8 @@
 
 const { Console } = require('console');
 const https = require('https')
+const hostname= 'api.sendgrid.com'
+const path= '/v3/mail/send'
 
 function enviar(email,asunto,msg){
       var data = JSON.stringify({
@@ -18,28 +20,25 @@ function enviar(email,asunto,msg){
         path: '/v3/mail/send',
         method: 'POST',
         headers: {
-            'Authorization': 'Bearer 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',
+            'Authorization': 'Bearer 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',
             'Content-Type': 'application/json',
             'Content-Length': Buffer.byteLength(data)
         }
       };
-      var response='';
-      const req = https.request(options, (res) => {
+      var req = https.request(options, (res) => {
+        var response
         console.log(res.statusCode)
         if (res.statusCode==202){
             console.log(res.statusCode)
-            response = 'Notificacion Enviada';
+            response= "Email enviado";
           }
         else
-            response= 'Fallo el envio de mail';
-
-      });
-      
-      req.write(data);
-      console.log(response)
-      req.end('hola');
-      
-      return response
-
+            response= (error ={
+              message:"Error al enviar el mail"
+            });
+            return response
+      }
+      );
+    req.end('hola')
     }
     exports.enviar = enviar
