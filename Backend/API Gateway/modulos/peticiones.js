@@ -1,21 +1,22 @@
 const puertoReservas = '4000';
 const puertoSucursales = '3000';
 
+const http = require('http');
+
 
 async function enviar(data, options, cliente)
 {    
     const request = http.request(options, function (response) {
 
         let body = ''
-      
-        console.log('Status Code:', response.statusCode);
-      
+            
         response.on('data', (chunk) => {
           body += chunk;
-          enviarRespuesta(cliente, cod, chunk);
+          enviarRespuesta(cliente, 200, chunk);
         });
       
-        response.on('end', () => {
+        response.on('end', (chunk) => {
+            console.debug(chunk);
             console.log('Body: ', body);
         });
     });
@@ -24,48 +25,13 @@ async function enviar(data, options, cliente)
     request.end();
 }
 
-
 function ComprobarRecurso(rec, recurso)
 {
     return rec.includes(recurso);
 }
-async function AltaReserva(data, cliente)
-{
-    d = JSON.parse(data);
-    if (idReserva <= 0)
-    {        
-        throw 'idReserva erroneo';
-    }
-    else
-    {
-        fecha = nTurnos[i].dateTime.split('T');
-        
-        if (fecha.length != 2)
-        {        
-            throw 'Error fecha';
-        }
-    }
 
-    const data = JSON.stringify({
-        email: data.email,
-        userId: data.userId
-    });
 
-    var options = {
-        method: 'POST',
-        path: '/confirmar/'+idReserva,
-    
-        port: '4000',
-        //json: true,
-        headers: {
-            'Content-Type': 'application/json',
-            'Content-Length': data.length
-        }
-    };
-
-    return JSON.stringify('');
-}
-async function GetTurnosUsuario(data, cliente)
+async function GetTurnosUsuario(data, request, cliente)
 {
     let i = 0;
     let len = turnos.length;
@@ -90,31 +56,135 @@ async function GetTurnosUsuario(data, cliente)
         res: result
     });
 }
-async function GetSucursales(data, cliente)
+
+async function AltaReserva(data, request, cliente)
+{
+    const ndata = JSON.stringify({
+        userId: d.userId,
+        email: d.email
+    });
+    var options = {
+        method: 'GET',
+        path: request.url,
+    
+        port: puertoReservas,
+        headers: {
+            'Content-Type': 'application/json',
+            'Content-Length': ndata.length
+        }
+    };
+
+    enviar(ndata, options, cliente);
+
+    return 1; 
+}
+async function VerificarTurno(data, request, cliente)
+{
+    const ndata = JSON.stringify({
+        userId: d.userId,
+    });
+    var options = {
+        method: 'GET',
+        path: request.url,
+    
+        port: puertoReservas,
+        headers: {
+            'Content-Type': 'application/json',
+            'Content-Length': ndata.length
+        }
+    };
+
+    enviar(ndata, options, cliente);
+
+    return 1; 
+}
+async function GetReservas(data, request, cliente)
+{
+    const ndata = JSON.stringify('');
+    var options = {
+        method: 'GET',
+        path: request.url,
+    
+        port: puertoReservas,
+        headers: {
+            'Content-Type': 'application/json',
+            'Content-Length': ndata.length
+        }
+    };
+
+    enviar(ndata, options, cliente);
+
+    return 1; 
+}
+async function GetReserva(data, request, cliente)
+{
+    const ndata = JSON.stringify('');
+
+    var options = {
+        method: 'GET',
+        path: request.url,
+    
+        port: puertoReservas,
+        headers: {
+            'Content-Type': 'application/json',
+            'Content-Length': ndata.length
+        }
+    };
+
+    enviar(ndata, options, cliente);
+
+    return 1; 
+}
+async function GetSucursales(data, request, cliente)
 {
     d = JSON.parse(data);
 
-    const data = JSON.stringify({
-        id: data.branchId,
-        lat: data.lat,
-        lng: data.lng,
-        name: data.name
+    const ndata = JSON.stringify({
+        id: d.branchId,
+        lat: d.lat,
+        lng: d.lng,
+        name: d.name
     });
 
     var options = {
         method: 'GET',
-        path: '/api/sucursales',
+        path: request.url,
     
         port: puertoSucursales,
         headers: {
             'Content-Type': 'application/json',
-            'Content-Length': data.length
+            'Content-Length': ndata.length
         }
     };
 
-    enviar(data, options, cliente);
+    enviar(ndata, options, cliente);
 
-    return 1;
+    return 1; 
+}
+async function GetSucursal(data, request, cliente)
+{
+    d = JSON.parse(data);
+
+    const ndata = JSON.stringify({
+        lat: d.lat,
+        lng: d.lng,
+        name: d.name
+    });
+
+    var options = {
+        method: 'GET',
+        path: request.url,
+    
+        port: puertoSucursales,
+        headers: {
+            'Content-Type': 'application/json',
+            'Content-Length': ndata.length
+        }
+    };
+
+    enviar(ndata, options, cliente);
+
+    return 1; 
 }
 function enviarRespuesta(response, cod, res)
 {
@@ -125,7 +195,11 @@ function enviarRespuesta(response, cod, res)
 module.exports = {
     ComprobarRecurso : ComprobarRecurso,
     AltaReserva : AltaReserva,
+    VerificarTurno : VerificarTurno,
+    GetReservas : GetReservas,
+    GetReserva : GetReserva,
     GetTurnosUsuario : GetTurnosUsuario,
     GetSucursales : GetSucursales,
+    GetSucursal : GetSucursal,
     enviarRespuesta : enviarRespuesta
 }
