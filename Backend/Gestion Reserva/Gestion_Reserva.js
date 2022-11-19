@@ -31,35 +31,39 @@ const server = http.createServer(function (request, response){
             {
                 peticiones.AltaReserva(turnos, parametro, data, enviarNotificacion.enviar).then(function (result)
                 {
-                    peticiones.enviarRespuesta(response, 200, result);
-                    response.end(res);
+                    peticiones.enviarRespuesta(response, 200);
+                    response.end(result);
                 }).catch(function(result){
-                    peticiones.enviarRespuesta(response, 400, result);
-                    response.end(res);
+                    peticiones.enviarRespuesta(response, 400);
+                    response.end(result);
                 });
             }
             else if (peticiones.ComprobarRecurso(servicio, 'solicitar') && servicio == undefined)
             {
                 peticiones.VerificarTurno(turnos, parametro).then(function (result)
                 {
-                    peticiones.enviarRespuesta(response, 200, result);
-                    response.end(res);
+                    peticiones.enviarRespuesta(response, 200);
+                    response.end(result);
                 }).catch(function(result){
-                    peticiones.enviarRespuesta(response, 400, result);
-                    response.end(res);
+                    peticiones.enviarRespuesta(response, 400);
+                    response.end(result);
                 });
-            } 
+            } else
+            {
+                peticiones.enviarRespuesta(response, 400);
+                response.end();
+            }
             break;
         case 'GET':
             if (peticiones.ComprobarRecurso(recurso, 'reservas') && parametro != undefined)
             {
                 peticiones.GetReserva(turnos, parametro).then(function (result)
                 {
-                    peticiones.enviarRespuesta(response, 200, result);
-                    response.end(res);
+                    peticiones.enviarRespuesta(response, 200);
+                    response.end(result);
                 }).catch(function(result){
-                    peticiones.enviarRespuesta(response, 400, result);
-                    response.end(res);
+                    peticiones.enviarRespuesta(response, 400);
+                    response.end(result);
                 });
             }
             else if (peticiones.ComprobarRecurso(recurso, 'reservas'))
@@ -67,12 +71,17 @@ const server = http.createServer(function (request, response){
                 query = url.parse(request.url, true).query;
                 peticiones.GetReservas(turnos, query).then(function (result)
                 {
-                    peticiones.enviarRespuesta(response, 200, result);
-                    response.end(res);
+                    peticiones.enviarRespuesta(response, 200);
+                    response.end(result);
                 }).catch(function(result){
-                    peticiones.enviarRespuesta(response, 400, result);
-                    response.end(res);
+                    peticiones.enviarRespuesta(response, 400);
+                    response.end(result);
                 });
+            } 
+            else
+            {
+                peticiones.enviarRespuesta(response, 400);
+                response.end();
             }
 
             break;
