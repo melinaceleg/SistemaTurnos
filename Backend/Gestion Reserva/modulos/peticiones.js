@@ -2,8 +2,7 @@ const manejoTurnos = require('./manejoTurnos');
 
 function ComprobarRecurso(rec, recurso)
 {
-    return rec.includes(recurso);
-    //return rec == recurso;
+    return rec != undefined && rec.includes(recurso);
 }
 async function AltaReserva(turnos, idReserva, data, callback)
 {
@@ -99,11 +98,9 @@ async function GetReserva(turnos, idReserva)
     let indice = manejoTurnos.BuscarReserva(turnos, idReserva);
     return JSON.stringify(indice != -1? turnos[indice]:'');
 }
-function enviarRespuesta(response, cod, res)
+function enviarRespuesta(response, cod)
 {
-    console.debug(res);
     response.writeHead(cod,{'Content-Type':'application/json'});
-    response.end(res);
 }
 
 module.exports = {
