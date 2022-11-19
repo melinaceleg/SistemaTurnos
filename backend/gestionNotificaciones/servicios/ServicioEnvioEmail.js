@@ -1,24 +1,25 @@
 
-const { Console } = require('console');
 const https = require('https');
 const { env } = require('process');
 const hostname= 'api.sendgrid.com'
 const path= '/v3/mail/send'
-let okResponse = false
-function enviar(email,asunto,msg){
+const port=443
+
+
+
+function enviar(emails,asunto,msg,resSer){
       var data = JSON.stringify({
         'personalizations': 
-                [{'to': [{'email': email}]}],
+                [{'to':emails}],
                 'from': {'email': process.env.USER_SEND_GRID},
                 'subject': asunto,
                 'content': [{'type': 'text/plain', value: msg}]      
     });
 
-
     const options = {
-        hostname: 'api.sendgrid.com',
-        port: 443,
-        path: '/v3/mail/send',
+        hostname: hostname,
+        port: port,
+        path: path,
         method: 'POST',
         headers: {
             'Authorization': 'Bearer '+ process.env.TOKEN_SEND_GRID ,
@@ -26,20 +27,27 @@ function enviar(email,asunto,msg){
             'Content-Length': Buffer.byteLength(data)
         }
       };
-     var req = https.request(options, (res) => {
-        if (res.statusCode=='202'){
-          okResponse=true;
-        }      
+      return send(options,data,resSer)
+  }
+
+   function send(options,data,resSer){
+    var req = https.request(options, (res) => {
         res.on('data', (d) => {
-          process.stdout.write(d);
-        });
-      return res.statusCode
+        process.stdout.write(d);
       });
-      req.write(data);
-      req.end();
-      if (okResponse)
-        return {'message':'Mail enviado'}
-      else
-        return{'error':'Error al enviar mail'}
+      return hanldeResponse(res.statusCode,resSer)
+    });
+    req.write(data);
+    req.end();
+  }
+
+    function hanldeResponse(statusCode,resSer){
+    if (statusCode==202)
+      return resSer.end(JSON.stringify({'message':'Mail/s enviado/s'}))
+  else{
+    resSer.writeHead(400)
+    return resSer.end(JSON.stringify({'error':'Error al enviar mail'}))
+ 
+  }
   }
     exports.enviar = enviar
