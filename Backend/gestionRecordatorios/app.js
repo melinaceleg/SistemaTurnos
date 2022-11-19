@@ -63,7 +63,7 @@ else
       req.end();
     }
       function hanldeResponse(statusCode,noNotificados,emails){
-      if (statusCode!=200){
+      if (statusCode==200){
         agregaNotificados(noNotificados);
         console.log(JSON.stringify({'message':'Recordatorios enviados y puestos en lista de enviados a: ' + emails.map(e=>e.email)}))
       }
