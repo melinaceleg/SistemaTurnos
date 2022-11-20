@@ -23,11 +23,12 @@ server.on('request',(request,response) => {
     let urlRequest=  url.split("/");
     urlRequest=urlRequest.slice(1);
     console.log(urlRequest)
+        
         if (urlRequest[0] == RESOURCE) ///si es el recurso sucursales
         {
             if(urlRequest.length == 1) ////si posee solo 1 parametro
             {   
-                if (method ==  GETMETHOD)
+                if (method ==  GETMETHOD || 'OPTIONS')
                 {                              
                     sucursalService.getAll()
                         .then((data) => 

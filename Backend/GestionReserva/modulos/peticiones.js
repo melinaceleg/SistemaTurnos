@@ -100,7 +100,11 @@ async function GetReserva(turnos, idReserva)
 }
 function enviarRespuesta(response, cod)
 {
-    response.writeHead(cod,{'Content-Type':'application/json'});
+    response.writeHead(cod,{'Content-Type':'application/json',
+    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Headers':'*',
+    'Access-Control-Allow-Methods': '*',
+    'Access-Control-Allow-Credentials' : true});
 }
 
 module.exports = {

@@ -32,7 +32,11 @@ export default class ErrorHandler
 
   OK = (response,result) => 
   {
-    response.writeHead(200,{'Content-Type':'application/json'});
+    response.writeHead(200,{'Content-Type':'application/json',
+    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Headers':'*',
+    'Access-Control-Allow-Methods': 'GET',
+    'Access-Control-Allow-Credentials' : true})
     this.body = result; ///plano, si es un objeto debera hacerse stringify 
 
   }
