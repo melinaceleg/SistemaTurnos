@@ -9,7 +9,7 @@ const enviarNotificacion = require('./modulos/enviarNotificacion');
 
 //manejoTurnos.GuardarTurnos(manejoTurnos.CrearJSON(20, 2022, 09, 02, 10, 00, 30));
 
-let turnos = manejoTurnos.CargarTurnos();
+//let turnos = manejoTurnos.CargarTurnos();
 /*let turnos;
 manejoTurnos.CargarTurnos().then(function (result)
 {
@@ -28,16 +28,7 @@ const server = http.createServer(function (request, response){
     {
         case 'POST':
             if (peticiones.ComprobarRecurso(servicio, 'confirmar'))
-            {
-                peticiones.AltaReserva(turnos, parametro, data, enviarNotificacion.enviar).then(function (result)
-                {
-                    peticiones.enviarRespuesta(response, 200);
-                    response.end(result);
-                }).catch(function(result){
-                    peticiones.enviarRespuesta(response, 400);
-                    response.end(result);
-                });
-            }
+                peticiones.parseReques(request,manejoTurnos.CargarTurnos(), parametro, enviarNotificacion.enviar,response)
             else if (peticiones.ComprobarRecurso(servicio, 'solicitar') && servicio == undefined)
             {
                 peticiones.VerificarTurno(turnos, parametro).then(function (result)

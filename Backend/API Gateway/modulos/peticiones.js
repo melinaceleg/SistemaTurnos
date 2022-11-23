@@ -64,7 +64,7 @@ async function AltaReserva(data, request, cliente)
         email: d.email
     });
     var options = {
-        method: 'GET',
+        method: 'POST',
         path: request.url,
     
         port: puertoReservas,
