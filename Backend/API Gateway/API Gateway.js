@@ -9,39 +9,51 @@ const server = http.createServer(function (request, response){
     dir = request.url.split('/');
     recurso = dir[2];
     servicio = dir[3];
-    paremtro = dir[4];
+    parametro = dir[4];
 
     switch (request.method)
     {
         case 'POST':
             if (peticiones.ComprobarRecurso(recurso, 'reservas') && peticiones.ComprobarRecurso(servicio, 'confirmar'))
             {
-                peticiones.AltaReserva(data, request, response).then(function (result)
+                peticiones.AltaReserva(request, response).then(function (result)
                 {
                 }).catch(function(result){
+                    peticiones.enviarRespuesta(response, 400);
+                    response.end();
                 });
             }
-            else if (peticiones.ComprobarRecurso(recurso, 'reservas') && peticiones.ComprobarRecurso(servicio, 'confirmar'))
+            else if (peticiones.ComprobarRecurso(recurso, 'reservas') && peticiones.ComprobarRecurso(servicio, 'solicitar'))
             {
-                peticiones.VerificarTurno(data, request, response).then(function (result)
+                peticiones.VerificarTurno(request, response).then(function (result)
                 {
                 }).catch(function(result){
+                    peticiones.enviarRespuesta(response, 400);
+                    response.end();
                 });
+            } else
+            {
+                peticiones.enviarRespuesta(response, 400);
+                response.end();
             }
             break;
         case 'GET':
             if (peticiones.ComprobarRecurso(recurso, 'reservas') && parametro != undefined)
             {
-                peticiones.GetReserva(data, response).then(function (result)
+                peticiones.GetReserva(request, response).then(function (result)
                 {
                 }).catch(function(result){
+                    peticiones.enviarRespuesta(response, 400);
+                    response.end();
                 });
             }
             else if (peticiones.ComprobarRecurso(recurso, 'reservas'))
             {
-                peticiones.GetReservas(data, response).then(function (result)
+                peticiones.GetReservas(request, response).then(function (result)
                 {
                 }).catch(function(result){
+                    peticiones.enviarRespuesta(response, 400);
+                    response.end();
                 });
             }
             else if (peticiones.ComprobarRecurso(recurso, 'sucursales') && parametro != undefined)
@@ -49,6 +61,8 @@ const server = http.createServer(function (request, response){
                 peticiones.GetSucursal(data, request, response).then(function (result)
                 {
                 }).catch(function(result){
+                    peticiones.enviarRespuesta(response, 400);
+                    response.end();
                 });
             }
             else if (peticiones.ComprobarRecurso(recurso, 'sucursales'))
@@ -56,7 +70,13 @@ const server = http.createServer(function (request, response){
                 peticiones.GetSucursales(data, request, response).then(function (result)
                 {
                 }).catch(function(result){
+                    peticiones.enviarRespuesta(response, 400);
+                    response.end();
                 });
+            } else
+            {
+                peticiones.enviarRespuesta(response, 400);
+                response.end();
             }
 
             break;

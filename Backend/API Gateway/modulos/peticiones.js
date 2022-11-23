@@ -7,17 +7,20 @@ const http = require('http');
 async function enviar(data, options, cliente)
 {    
     const request = http.request(options, function (response) {
-
-        let body = ''
             
         response.on('data', (chunk) => {
-          body += chunk;
-          enviarRespuesta(cliente, 200, chunk);
+          console.debug(chunk);
+          enviarRespuesta(cliente, response.statusCode, chunk);
+          console.debug('!!!!!!!');
+          console.debug(chunk);
+          cliente.end(chunk);
         });
       
         response.on('end', (chunk) => {
+            enviarRespuesta(cliente, response.statusCode, chunk);
+            console.debug('??????');
             console.debug(chunk);
-            console.log('Body: ', body);
+            cliente.end(chunk);
         });
     });
       
@@ -57,32 +60,67 @@ async function GetTurnosUsuario(data, request, cliente)
     });
 }
 
-async function AltaReserva(data, request, cliente)
+async function AltaReserva(request, cliente)
 {
-    const ndata = JSON.stringify({
+    const data = JSON.stringify({
         userId: d.userId,
         email: d.email
     });
     var options = {
-        method: 'GET',
+        method: request.method, //'POST',
         path: request.url,
     
         port: puertoReservas,
         headers: {
             'Content-Type': 'application/json',
-            'Content-Length': ndata.length
+            'Content-Length': data.length
         }
     };
 
-    enviar(ndata, options, cliente);
+    enviar(data, options, cliente);
 
     return 1; 
 }
-async function VerificarTurno(data, request, cliente)
+async function VerificarTurno(request, cliente)
 {
-    const ndata = JSON.stringify({
-        userId: d.userId,
-    });
+    const data = JSON.stringify('');//JSON.stringify( userId: d.userId });
+    
+    var options = {
+        method: request.method, //'POST',
+        path: request.url,
+    
+        port: puertoReservas,
+        headers: {
+            'Content-Type': 'application/json',
+            'Content-Length': data.length
+        }
+    };
+    enviar(data, options, cliente);
+
+    return 1; 
+}
+async function GetReservas(request, cliente)
+{
+    const data = JSON.stringify('');
+    var options = {
+        method: request.method, //'GET',
+        path: request.url,
+    
+        port: puertoReservas,
+        headers: {
+            'Content-Type': 'application/json',
+            'Content-Length': data.length
+        }
+    };
+
+    enviar(data, options, cliente);
+
+    return 1; 
+}
+async function GetReserva(request, cliente)
+{
+    const data = JSON.stringify('');
+
     var options = {
         method: 'GET',
         path: request.url,
@@ -90,48 +128,11 @@ async function VerificarTurno(data, request, cliente)
         port: puertoReservas,
         headers: {
             'Content-Type': 'application/json',
-            'Content-Length': ndata.length
+            'Content-Length': data.length
         }
     };
 
-    enviar(ndata, options, cliente);
-
-    return 1; 
-}
-async function GetReservas(data, request, cliente)
-{
-    const ndata = JSON.stringify('');
-    var options = {
-        method: 'GET',
-        path: request.url,
-    
-        port: puertoReservas,
-        headers: {
-            'Content-Type': 'application/json',
-            'Content-Length': ndata.length
-        }
-    };
-
-    enviar(ndata, options, cliente);
-
-    return 1; 
-}
-async function GetReserva(data, request, cliente)
-{
-    const ndata = JSON.stringify('');
-
-    var options = {
-        method: 'GET',
-        path: request.url,
-    
-        port: puertoReservas,
-        headers: {
-            'Content-Type': 'application/json',
-            'Content-Length': ndata.length
-        }
-    };
-
-    enviar(ndata, options, cliente);
+    enviar(data, options, cliente);
 
     return 1; 
 }
@@ -147,7 +148,7 @@ async function GetSucursales(data, request, cliente)
     });
 
     var options = {
-        method: 'GET',
+        method: request.method, //'GET',
         path: request.url,
     
         port: puertoSucursales,
@@ -172,7 +173,7 @@ async function GetSucursal(data, request, cliente)
     });
 
     var options = {
-        method: 'GET',
+        method: request.method, //'GET',
         path: request.url,
     
         port: puertoSucursales,
@@ -189,7 +190,6 @@ async function GetSucursal(data, request, cliente)
 function enviarRespuesta(response, cod, res)
 {
     response.writeHead(cod,{'Content-Type':'application/json'});
-    response.end(res);
 }
 
 module.exports = {

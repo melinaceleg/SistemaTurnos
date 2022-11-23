@@ -7,6 +7,7 @@ function ComprobarRecurso(rec, recurso)
 async function AltaReserva(turnos, idReserva, data, callback)
 {
     d = JSON.parse(data);
+    console.debug('alta turno!');
     indice = manejoTurnos.BuscarReserva(turnos, idReserva);
     if (idReserva <= 0)
     {        
@@ -37,7 +38,7 @@ async function VerificarTurno(turnos, idReserva)
     //d = JSON.parse(data);
     if (idReserva <= 0)
     {        
-        throw 'idReserva erroneo';
+        throw JSON.stringify('');//'idReserva erroneo';
     }
 
     while (i < len && turnos[i].idReserva < idReserva)
@@ -54,7 +55,6 @@ async function VerificarTurno(turnos, idReserva)
             }
         }
     }
-
     return JSON.stringify({
         res: result
     });
