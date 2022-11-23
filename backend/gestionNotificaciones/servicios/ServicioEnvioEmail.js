@@ -7,10 +7,10 @@ const port=443
 
 
 
-function enviar(emails,asunto,msg,resSer){
+function enviar(email,asunto,msg,resSer){
       var data = JSON.stringify({
         'personalizations': 
-                [{'to':emails}],
+                [{'to':[{email:email}]}],
                 'from': {'email': process.env.USER_SEND_GRID},
                 'subject': asunto,
                 'content': [{'type': 'text/plain', value: msg}]      
@@ -43,10 +43,10 @@ function enviar(emails,asunto,msg,resSer){
 
     function hanldeResponse(statusCode,resSer){
     if (statusCode==202)
-      return resSer.end(JSON.stringify({'message':'Mail/s enviado/s'}))
+      return resSer.end(JSON.stringify({'msg':'Email enviado'}))
   else{
     resSer.writeHead(400)
-    return resSer.end(JSON.stringify({'error':'Error al enviar mail'}))
+    return resSer.end(JSON.stringify({'msg':'Error al enviar email'}))
  
   }
   }

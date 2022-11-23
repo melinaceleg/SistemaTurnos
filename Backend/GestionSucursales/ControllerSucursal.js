@@ -21,11 +21,13 @@ server.on('request',(request,response) => {
     const {headers,method,url} = request;
     console.log(url);
     let urlRequest=  url.split("/");
-    urlRequest=urlRequest.slice(1);
+    //urlRequest=urlRequest.slice(1);
     console.log(urlRequest)
-        if (urlRequest[0] == RESOURCE) ///si es el recurso sucursales
+        if (urlRequest[2] == RESOURCE) ///si es el recurso sucursales
         {
-            if(urlRequest.length == 1) ////si posee solo 1 parametro
+            //if(urlRequest.length == 1) ////si posee solo 1 parametro
+            if(urlRequest[3]===undefined) ////si posee solo 1 parametro
+
             {   
                 if (method ==  GETMETHOD)
                 {                              
@@ -61,7 +63,7 @@ server.on('request',(request,response) => {
             else
             {
                 ///getbyId
-               if (!isNaN(parseInt(urlRequest[1])) && method == GETMETHOD) ///if the urlParam is a number and the method is GET
+               if (!isNaN(parseInt(urlRequest[3])) && method == GETMETHOD) ///if the urlParam is a number and the method is GET
                {
                    sucursalService.getById(parseInt(urlRequest[1]))
                         .then((result) => {

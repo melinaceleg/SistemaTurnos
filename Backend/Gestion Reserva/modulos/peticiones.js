@@ -19,12 +19,13 @@ async function AltaReserva(turnos, idReserva, data, callback,response)
         manejoTurnos.GuardarTurnos(turnos);
         console.debug('turno agregado!');
         callback(turnos[indice])
-        enviarRespuesta2(response,200,'Turno agregado conrrectamente');
+        enviarRespuesta2(response,200,JSON.stringify({'msg':'turno agregado correctamente'}));
 
     }
     else
     {
-        enviarRespuesta2(response,400,'turno ocupado o status incorrecto');
+         enviarRespuesta2(response,400,JSON.stringify({'msg':'turno ocupado o status incorrecto'}))
+  
     }
 }
 async function VerificarTurno(turnos, idReserva,response,userId)
@@ -56,14 +57,13 @@ async function VerificarTurno(turnos, idReserva,response,userId)
 
         }()
     }
-
    if(result==1)
         enviarRespuesta2(response,200,JSON.stringify({
             res: 1
         }))
     else
         enviarRespuesta2(response,400,JSON.stringify({
-            errorMessage: "Error al verrificar turno"
+            msg: "Error al verrificar turno"
         }))
         
 }
@@ -80,10 +80,6 @@ async function GetReservas(turnos, parametros)
     }
     if (parametros.dateTime != undefined)
     {        
-        if (parametros.dateTime.length != 2)
-        {        
-            throw 'Error fecha';
-        }
 
         nTurnos = nTurnos.filter(function (t) {
             return t.dateTime.split('T')[0] == parametros.dateTime
@@ -154,7 +150,7 @@ async function parseRequestAlta(req,turnos, idReserva, callback,response){
         if (userId===undefined|| email===undefined){
           //res.writeHead(422)
           //res.end(JSON.stringify({'mesageError':'Error de parseo'}))
-          return enviarRespuesta2(response,422,"Error de parseo")
+          return enviarRespuesta2(response,422,JSON.stringify({'msg':'Error de parseo'}))
         }
        else
         return AltaReserva(turnos, idReserva, data, callback,response)
@@ -163,14 +159,14 @@ async function parseRequestAlta(req,turnos, idReserva, callback,response){
       async function validateReqVerificar(data,turnos, idReserva,response){
         const userId=data.userId
         if (userId===undefined)
-          return enviarRespuesta2(response,422,"Error de parseo")
+          return enviarRespuesta2(response,422,JSON.stringify({'msg':'Error de parseo'}))
        else
         return VerificarTurno(turnos, idReserva,response,userId)
       }
 
       async function responseError(res){
             res.writeHead(400)
-            res.end(JSON.stringify({'mesageError':'Error'}))
+            res.end(JSON.stringify({'msg':'Error'}))
       }
 
 module.exports = {

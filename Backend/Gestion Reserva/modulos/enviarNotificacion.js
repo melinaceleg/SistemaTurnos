@@ -16,7 +16,7 @@ async function enviar(turno)
     var options = {
         hostname: 'localhost',
         method: 'POST',
-        path: '/notificaciones',
+        path: '/api/notificaciones',
 
         port: puerto,
         headers: {
@@ -32,7 +32,7 @@ async function send(options,data){
   var req = http.request(options, (res) => {
       res.on('data', (d) => {
       process.stdout.write(d);
-      anldeResponse(res.statusCode)
+      hanldeResponse(res.statusCode)
     })
 
   });
