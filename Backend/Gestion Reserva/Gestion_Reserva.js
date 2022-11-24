@@ -29,7 +29,7 @@ const server = http.createServer(function (request, response){
         case 'POST':
             if (peticiones.ComprobarRecurso(servicio, 'confirmar'))
             {
-                peticiones.AltaReserva(turnos, parametro, data, enviarNotificacion.enviar).then(function (result)
+                peticiones.AltaReserva(turnos, parametro, enviarNotificacion.enviar).then(function (result)
                 {
                     peticiones.enviarRespuesta(response, 200);
                     response.end(result);
@@ -38,7 +38,7 @@ const server = http.createServer(function (request, response){
                     response.end(result);
                 });
             }
-            else if (peticiones.ComprobarRecurso(servicio, 'solicitar') && servicio == undefined)
+            else if (peticiones.ComprobarRecurso(servicio, 'solicitar'))
             {
                 peticiones.VerificarTurno(turnos, parametro).then(function (result)
                 {
