@@ -5,27 +5,37 @@ const http = require('http');
 
 
 async function enviar(data, options, cliente)
-{    
-    const request = http.request(options, function (response) {
-            
-        response.on('data', (chunk) => {
-          console.debug(chunk);
-          enviarRespuesta(cliente, response.statusCode, chunk);
-          console.debug('!!!!!!!');
-          console.debug(chunk);
-          cliente.end(chunk);
+{
+    try
+    {
+        const request = http.request(options, function (response) {
+                
+            response.on('data', (chunk) => {
+              enviarRespuesta(cliente, response.statusCode, chunk);
+              cliente.end(chunk);
+            });
+          
+            /*response.on('end', (chunk) => {
+                enviarRespuesta(cliente, response.statusCode, chunk);
+                console.debug('??????');
+                console.debug(chunk);
+                cliente.end(chunk);
+            });*/
         });
-      
-        response.on('end', (chunk) => {
-            enviarRespuesta(cliente, response.statusCode, chunk);
-            console.debug('??????');
-            console.debug(chunk);
-            cliente.end(chunk);
+        request.on('error', function(err) {
+            enviarRespuesta(cliente, 400, JSON.stringify(''));
+            cliente.end();
+            console.debug('error conexion con el componente');
         });
-    });
-      
-    request.write(data);
-    request.end();
+          
+        request.write(data);
+        request.end();
+
+    } catch (error) {        
+        enviarRespuesta(cliente, 400, JSON.stringify(''));
+        cliente.end();
+        console.debug('error de respuesta');
+    }
 }
 
 function ComprobarRecurso(rec, recurso)
@@ -42,7 +52,7 @@ async function GetTurnosUsuario(data, request, cliente)
     //d = JSON.parse(data);
     if (idReserva <= 0)
     {        
-        throw 'idReserva erroneo';
+        throw JSON.stringify('');//'idReserva erroneo';
     }
     if (i < len && turnos[i].idReserva == idReserva)
     {
@@ -62,10 +72,19 @@ async function GetTurnosUsuario(data, request, cliente)
 
 async function AltaReserva(request, cliente)
 {
-    const data = JSON.stringify({
+    /*const data = JSON.stringify({
         userId: d.userId,
         email: d.email
-    });
+    });*/
+    //console.debug(JSON.parse(request.body));
+    console.debug();
+    const size = parseInt(request.headers['content-length'], 10)
+    const buffer = Buffer.allocUnsafe(size);
+    console.debug(buffer);
+    console.debug(JSON.parse(buffer));
+
+
+    const data = JSON.stringify('');
     var options = {
         method: request.method, //'POST',
         path: request.url,
@@ -122,7 +141,7 @@ async function GetReserva(request, cliente)
     const data = JSON.stringify('');
 
     var options = {
-        method: 'GET',
+        method: request.method, //'GET',
         path: request.url,
     
         port: puertoReservas,

@@ -16,6 +16,7 @@ const server = http.createServer(function (request, response){
         case 'POST':
             if (peticiones.ComprobarRecurso(recurso, 'reservas') && peticiones.ComprobarRecurso(servicio, 'confirmar'))
             {
+                console.debug(response);
                 peticiones.AltaReserva(request, response).then(function (result)
                 {
                 }).catch(function(result){

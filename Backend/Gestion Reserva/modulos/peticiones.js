@@ -4,14 +4,13 @@ function ComprobarRecurso(rec, recurso)
 {
     return rec != undefined && rec.includes(recurso);
 }
-async function AltaReserva(turnos, idReserva, data, callback)
+async function AltaReserva(turnos, idReserva, callback)
 {
     d = JSON.parse(data);
-    console.debug('alta turno!');
     indice = manejoTurnos.BuscarReserva(turnos, idReserva);
     if (idReserva <= 0)
     {        
-        throw 'idReserva erroneo';
+        throw JSON.stringify('');//'idReserva erroneo';
     }
     if (indice != -1 && turnos[indice].status == 1)
     {
@@ -22,11 +21,10 @@ async function AltaReserva(turnos, idReserva, data, callback)
         manejoTurnos.GuardarTurnos(turnos);
 
         callback(turnos[indice]);
-        console.debug('turno agregado!');
     }
     else
     {
-        throw 'turno ocupado o status incorrecto';
+        throw JSON.stringify('');//'turno ocupado o status incorrecto';
     }
     return JSON.stringify('');
 }
@@ -52,8 +50,9 @@ async function VerificarTurno(turnos, idReserva)
             {
                 turnos[i].status = 1;
                 result = 1;
+                manejoTurnos.GuardarTurnos(turnos);
             }
-        }
+        }();
     }
     return JSON.stringify({
         res: result
@@ -71,12 +70,7 @@ async function GetReservas(turnos, parametros)
         });
     }
     if (parametros.dateTime != undefined)
-    {        
-        if (parametros.dateTime.length != 2)
-        {        
-            throw 'Error fecha';
-        }
-
+    {     
         nTurnos = nTurnos.filter(function (t) {
             return t.dateTime.split('T')[0] == parametros.dateTime
         });

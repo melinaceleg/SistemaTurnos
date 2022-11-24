@@ -29,7 +29,7 @@ const server = http.createServer(function (request, response){
         case 'POST':
             if (peticiones.ComprobarRecurso(servicio, 'confirmar'))
             {
-                peticiones.AltaReserva(turnos, parametro, data, enviarNotificacion.enviar).then(function (result)
+                peticiones.AltaReserva(turnos, parametro, enviarNotificacion.enviar).then(function (result)
                 {
                     peticiones.enviarRespuesta(response, 200);
                     response.end(result);
