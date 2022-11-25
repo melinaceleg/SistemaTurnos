@@ -1,12 +1,12 @@
 const puertoReservas = '4000';
-const puertoSucursales = '8000';
+const puertoSucursales = '8080';
 
 const http = require('http');
 const { ErrorHandler } = require("./ErrorHandler");
 
 function ComprobarRecurso(rec, recurso)
 {
-    return rec.includes(recurso);
+    return rec != undefined && rec.includes(recurso);
 }
 
 function AltaReserva(request, datos)
@@ -15,7 +15,7 @@ function AltaReserva(request, datos)
         hostname: 'localhost',
         port: puertoReservas,
         method: 'POST',
-        path: request.url,
+        path: request.url, //ojo aca
         headers: { 'Content-Type': 'application/json','Content-Length': datos.length  }
 
       }
@@ -62,16 +62,16 @@ function GetReservas(request)
       }
 
       return new Promise((resolve, reject) => {
-        http.get(request.url, options, res => {
+        http.get(options, res => {
 
             let body = ''
         
-            res.on('data', data => {
-                body += data;
+            res.on('data', chunk => {
+                body += chunk;
             })
             
             res.on('end', () => {
-                if (response.statusCode == 200) {
+                if (res.statusCode == 200) {
                   resolve(JSON.parse(body))
                 } else {
                     let error = body;
@@ -82,19 +82,19 @@ function GetReservas(request)
         })
     })
 }
-async function GetSucursales(request)
+ function GetSucursales(request)
 {
     let options = {
         hostname: 'localhost',
         port: puertoSucursales,
         method: 'GET',
         path: request.url, //ojo aca
-        headers: { 'Content-Type': 'application/json'}
+        //headers: { 'Content-Type': 'application/json'}
 
       }
 
       return new Promise((resolve, reject) => {
-        http.get(request.url, options, res => {
+        http.get(options, res => {
 
             let body = ''
         
@@ -103,7 +103,7 @@ async function GetSucursales(request)
             })
             
             res.on('end', () => {
-                if (response.statusCode == 200) {
+                if (res.statusCode == 200) {
                   resolve(JSON.parse(body))
                 } else {
                     let error = body;
@@ -112,6 +112,8 @@ async function GetSucursales(request)
             })
         
         })
+           //request.write();
+            //request.end();
     })
 }
 

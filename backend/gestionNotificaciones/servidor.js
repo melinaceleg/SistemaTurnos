@@ -1,7 +1,7 @@
 const http = require('http');
 const enviar = require('./servicios/ServicioEnvioEmail')
 const port =  9000
-const uri='/notificaciones'
+const uri='/api/notificaciones'
 
 
 const server = http.createServer((req, res) => {
@@ -41,13 +41,13 @@ function parseRequestAndSend(req,res){
       }   
 
         function validateReq(data,res){
-          const destinatario=data.destinatario
+          const email=data.destinatario
           const asunto=data.asunto
           const cuerpo=data.cuerpo 
-          if (destinatario===undefined|| asunto===undefined||cuerpo===undefined){
+          if (email===undefined|| asunto===undefined||cuerpo===undefined){
             res.writeHead(422)
             res.end(JSON.stringify({'mesageError':'Error de parseo'}))
           }
          else
-          return enviar.enviarUnicoEmail(destinatario,asunto,cuerpo,res)
+          return enviar.enviar(email,asunto,cuerpo,res)
         }

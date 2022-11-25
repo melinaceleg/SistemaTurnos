@@ -1,4 +1,4 @@
-const puerto = 6000
+const puerto = 8000
 
 const http = require('http');
 const { ErrorHandler } = require("./modulos/ErrorHandler");
@@ -26,10 +26,14 @@ server.on('request',(request, response) =>{
                 {
                     let errorHandler = new ErrorHandler(null)
                     errorHandler.OK(response,result);
-                    response.end();
+                    response.end(JSON.stringify(result));
                 })
                 .catch(function(error){
-                    response.writeHead(response.statusCode,{'Content-Type':'application/json'});
+                    response.writeHead(400,{'Content-Type':'application/json',
+                    'Access-Control-Allow-Origin': '*',
+                    'Access-Control-Allow-Headers':'*',
+                    'Access-Control-Allow-Methods': '*',
+                    'Access-Control-Allow-Credentials' : true});
                     response.end(error);
                 });
             }            
@@ -56,24 +60,32 @@ server.on('request',(request, response) =>{
                 {
                     let errorHandler = new ErrorHandler(null)
                     errorHandler.OK(response,result);
-                    response.end();
+                    response.end(JSON.stringify(result));
                 })
                 .catch(function(result){
-                    response.writeHead(response.statusCode,{'Content-Type':'application/json'});
-                    response.end(result);
+                    response.writeHead(400,{'Content-Type':'application/json',
+                    'Access-Control-Allow-Origin': '*',
+                    'Access-Control-Allow-Headers':'*',
+                    'Access-Control-Allow-Methods': '*',
+                    'Access-Control-Allow-Credentials' : true});
+                    response.end(JSON.stringify(result));
                 });
             }
             else if (peticiones.ComprobarRecurso(recurso, 'sucursales'))
             {
-                peticiones.GetSucursal(request, response).then(function (result)
+                peticiones.GetSucursales(request).then(function (result)
                 {
                     let errorHandler = new ErrorHandler(null)
-                    errorHandler.OK(response,result);
-                    response.end();
+                    errorHandler.OK(response,result);                    
+                    response.end(JSON.stringify(result));
                 })
                 .catch(function(result){
-                    response.writeHead(response.statusCode,{'Content-Type':'application/json'});
-                    response.end(result);
+                    response.writeHead(400,{'Content-Type':'application/json',
+                    'Access-Control-Allow-Origin': '*',
+                    'Access-Control-Allow-Headers':'*',
+                    'Access-Control-Allow-Methods': '*',
+                    'Access-Control-Allow-Credentials' : true});
+                    response.end(JSON.stringify(result));
                 });
             }
             else
@@ -83,6 +95,16 @@ server.on('request',(request, response) =>{
                 response.end(errorHandler.body);
             }
 
+            break;
+            case 'OPTIONS':
+            //Le doy el ok al navegador de que admito cualquier origen
+            response.writeHead(200,{
+                    'Content-Type':'application/json',
+                    'Access-Control-Allow-Origin': '*',
+                    'Access-Control-Allow-Headers':'*',
+                    'Access-Control-Allow-Methods': '*',
+                    'Access-Control-Allow-Credentials' : true})
+            response.end('')
             break;
     }
 });

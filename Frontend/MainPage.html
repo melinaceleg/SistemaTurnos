@@ -15,7 +15,7 @@
             <h1 class="colorH">Sistema de turnos</h1>
         </div>
         <!-- Tamaño < 576 muestra 1 col, tamaño >=576 2 col(para que el mapa se vea bien) -->
-        <div class="row row-cols-xs-1 row-cols-sm-2">
+        <div class="row row-cols-xs-1 row-cols-sm-2" id="fila_formulario">
             <div id = "col_formulario">
                 <form  name="Solicitud de turno" id="sol_turnos">
                     <div class ="row justify-content-center separacion" id = espacio_email>
@@ -30,16 +30,22 @@
                     </div>
                     <div class = "row justify-content-center separacion">
                         <label for="startDate">Seleccione una fecha:</label>
-                        <input id="fechayhora" class="form-control" type="datetime-local"/>
+                        <input id="fechayhora" class="form-control" type="date"/>
                     </div>
                     <div class="row separacion">
                         <input type="submit" id="buscar_turno" class="btn btn-primary" disabled value="Buscar turno">
                     </div>
                 </form>
             </div>
-            <div class="colorB" id="col_mapa">
-                <p>Aca va el mapa</p>
+            <div class="" id="col_mapa">
+                <iframe id="mapa" src=""
+                     width="100%"
+                     height="450"
+                     frameborder="0"></iframe>
             </div>
+        </div>
+        <div id="fila_turnos">
+            <ul class="list-group list-group-horizontal-xxl" id="lista_turnos"></ul>
         </div>
     </div>    
     <script src="./FilesJS/bootstrap.min.js"></script>

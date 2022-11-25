@@ -1,7 +1,7 @@
 {
     "version": "0.2.0",
     "configurations": [
-        
+
         {
             "type": "pwa-node",
             "request": "launch",
@@ -15,11 +15,7 @@
             "type": "node",
             "name": "Run Current File",
             "request": "launch",
-            "program": "${workspaceFolder}/backend/gestionNotificaciones/servidor.js",
-            "env":{
-                "TOKEN_SEND_GRID":"token",
-                "USER_SEND_GRID":"ivovucetic95@gmail.com"
-            }
+            "program": "${workspaceFolder}/backend/gestionNotificaciones/servidor.js"
         }
     ]
 }

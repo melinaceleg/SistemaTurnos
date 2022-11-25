@@ -6,36 +6,14 @@ const path= '/v3/mail/send'
 const port=443
 
 
-function enviarUnicoEmail(destinatario,asunto,cuerpo,resSer){
-  var data = JSON.stringify({
-    'personalizations': 
-            [{'to':[{"email":destinatario}]}],
-            'from': {'email': 'ivovucetic95@gmail.com'},
-            'subject': asunto,
-            'content': [{'type': 'text/plain', value: cuerpo}]      
-});
 
-const options = {
-    hostname: hostname,
-    port: port,
-    path: path,
-    method: 'POST',
-    headers: {
-        'Authorization': 'Bearer '+ 'token' ,
-        'Content-Type': 'application/json',
-        'Content-Length': Buffer.byteLength(data)
-    }
-  };
-  return send(options,data,resSer)
-}
-
-function enviarListaEmails(destinatarios,asunto,cuerpo,resSer){
+function enviar(email,asunto,msg,resSer){
       var data = JSON.stringify({
         'personalizations': 
-                [{'to':destinatarios}],
+                [{'to':[{email:email}]}],
                 'from': {'email': process.env.USER_SEND_GRID},
                 'subject': asunto,
-                'content': [{'type': 'text/plain', value: cuerpo}]      
+                'content': [{'type': 'text/plain', value: msg}]      
     });
 
     const options = {
@@ -65,12 +43,11 @@ function enviarListaEmails(destinatarios,asunto,cuerpo,resSer){
 
     function hanldeResponse(statusCode,resSer){
     if (statusCode==202)
-      return resSer.end(JSON.stringify({'message':'Mail/s enviado/s'}))
+      return resSer.end(JSON.stringify({'msg':'Email enviado'}))
   else{
     resSer.writeHead(400)
-    return resSer.end(JSON.stringify({'error':'Error al enviar mail'}))
+    return resSer.end(JSON.stringify({'msg':'Error al enviar email'}))
  
   }
   }
-    exports.enviarUnicoEmail = enviarUnicoEmail
-    exports.enviarListaEmails = enviarListaEmails
+    exports.enviar = enviar

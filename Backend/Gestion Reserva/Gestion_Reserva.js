@@ -28,23 +28,25 @@ const server = http.createServer(function (request, response){
     {
         case 'POST':
             if (peticiones.ComprobarRecurso(servicio, 'confirmar'))
-
             {
+                
                 peticiones.parseRequestAlta(request,manejoTurnos.CargarTurnos(), parametro, enviarNotificacion.enviar,response)
             }
-            else if (peticiones.ComprobarRecurso(servicio, 'solicitar'))
-                peticiones.parseRequestVerificar(request,manejoTurnos.CargarTurnos(),parametro,response)
+                else if (peticiones.ComprobarRecurso(servicio, 'solicitar'))
 
+                peticiones.parseRequestVerificar(request,manejoTurnos.CargarTurnos(),parametro,response)
+            else
             {
                 peticiones.enviarRespuesta(response, 400);
                 response.end();
             }
-
             break;
         case 'GET':
             if (peticiones.ComprobarRecurso(recurso, 'reservas') && parametro != undefined)
             {
-                peticiones.GetReserva(request,manejoTurnos.CargarTurnos(), parametro).then(function (result)
+
+                peticiones.GetReserva(manejoTurnos.CargarTurnos(), parametro).then(function (result)
+
                 {
                     peticiones.enviarRespuesta(response, 200);
                     response.end(result);
@@ -56,7 +58,7 @@ const server = http.createServer(function (request, response){
             else if (peticiones.ComprobarRecurso(recurso, 'reservas'))
             {
                 query = url.parse(request.url, true).query;
-                peticiones.GetReservas(turnos, query).then(function (result)
+                peticiones.GetReservas(manejoTurnos.CargarTurnos(), query).then(function (result)
                 {
                     peticiones.enviarRespuesta(response, 200);
                     response.end(result);

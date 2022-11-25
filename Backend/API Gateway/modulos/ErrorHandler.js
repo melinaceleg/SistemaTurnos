@@ -24,17 +24,29 @@ const { Error } = require("./Error");
   NotFound = (response) =>
   {
     this.body = JSON.stringify(new Error("Resource Not Found"));
-    response.writeHead(400,{'Content-Type':'application/json'});
+    response.writeHead(400,{'Content-Type':'application/json',
+    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Headers':'*',
+    'Access-Control-Allow-Methods': '*',
+    'Access-Control-Allow-Credentials' : true});
   }
 
   InternalError = (response) => 
   {
-    response.writeHead(500,{'Content-Type':'application/json'});
+    response.writeHead(500,{'Content-Type':'application/json',
+    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Headers':'*',
+    'Access-Control-Allow-Methods': '*',
+    'Access-Control-Allow-Credentials' : true});
   }
 
   OK = (response,result) => 
   {
-    response.writeHead(200,{'Content-Type':'application/json'});
+    response.writeHead(200,{'Content-Type':'application/json',
+    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Headers':'*',
+    'Access-Control-Allow-Methods': '*',
+    'Access-Control-Allow-Credentials' : true});
     this.body = result; ///plano, si es un objeto debera hacerse stringify 
 
   }
