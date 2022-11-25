@@ -66,7 +66,16 @@ const server = http.createServer(function (request, response){
                 peticiones.enviarRespuesta(response, 400);
                 response.end();
             }
-
+            break;
+            case 'OPTIONS':
+            //Le doy el ok al navegador de que admito cualquier origen
+            response.writeHead(200,{
+                    'Content-Type':'application/json',
+                    'Access-Control-Allow-Origin': '*',
+                    'Access-Control-Allow-Headers':'*',
+                    'Access-Control-Allow-Methods': '*',
+                    'Access-Control-Allow-Credentials' : true})
+            response.end("todo ok")
             break;
     }
 });
