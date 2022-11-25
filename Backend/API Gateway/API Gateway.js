@@ -1,96 +1,90 @@
 const puerto = 6000
 
 const http = require('http');
+const { ErrorHandler } = require("./modulos/ErrorHandler");
 
 const peticiones = require('./modulos/peticiones');
 
-const server = http.createServer(function (request, response){
+const server = http.createServer();
+
+server.on('request',(request, response) =>{
     //[ '', 'api', '' ]
-    let dir = request.url.split('/');
-    let body;
-    let recurso = dir[2];
-    let servicio = dir[3];
-    let parametro = dir[4];
+    dir = request.url.split('/');
+    recurso = dir[2];
+    let body=''
 
-    request.on('data', function(data)
+    request.on('data', (data) =>
     {
-        body += data;
-    });
-
-    request.on('end', function(data)
-    {
-        switch (request.method)
+        body += data
+        if (request.method == 'POST')
         {
-            case 'POST':
-                if (peticiones.ComprobarRecurso(recurso, 'reservas') && peticiones.ComprobarRecurso(servicio, 'confirmar'))
+            if (peticiones.ComprobarRecurso(recurso, 'reservas'))
+            {
+                console.log(body);
+                peticiones.AltaReserva(request, body)
+                .then(function (result)
                 {
-                    peticiones.AltaReserva(body, request, response).then(function (result)
-                    {
-                    }).catch(function(result){
-                        peticiones.enviarRespuesta(response, 400);
-                        response.end();
-                    });
-                }
-                else if (peticiones.ComprobarRecurso(recurso, 'reservas') && peticiones.ComprobarRecurso(servicio, 'solicitar'))
-                {
-                    peticiones.VerificarTurno(body, request, response).then(function (result)
-                    {
-                    }).catch(function(result){
-                        peticiones.enviarRespuesta(response, 400);
-                        response.end();
-                    });
-                } else
-                {
-                    peticiones.enviarRespuesta(response, 400);
+                    let errorHandler = new ErrorHandler(null)
+                    errorHandler.OK(response,result);
                     response.end();
-                }
-                break;
-            case 'GET':
-                if (peticiones.ComprobarRecurso(recurso, 'reservas') && parametro != undefined)
-                {
-                    peticiones.GetReserva(request, response).then(function (result)
-                    {
-                    }).catch(function(result){
-                        peticiones.enviarRespuesta(response, 400);
-                        response.end();
-                    });
-                }
-                else if (peticiones.ComprobarRecurso(recurso, 'reservas'))
-                {
-                    peticiones.GetReservas(request, response).then(function (result)
-                    {
-                    }).catch(function(result){
-                        peticiones.enviarRespuesta(response, 400);
-                        response.end();
-                    });
-                }
-                else if (peticiones.ComprobarRecurso(recurso, 'sucursales') && parametro != undefined)
-                {
-                    peticiones.GetSucursal(data, request, response).then(function (result)
-                    {
-                    }).catch(function(result){
-                        peticiones.enviarRespuesta(response, 400);
-                        response.end();
-                    });
-                }
-                else if (peticiones.ComprobarRecurso(recurso, 'sucursales'))
-                {
-                    peticiones.GetSucursales(data, request, response).then(function (result)
-                    {
-                    }).catch(function(result){
-                        peticiones.enviarRespuesta(response, 400);
-                        response.end();
-                    });
-                } else
-                {
-                    peticiones.enviarRespuesta(response, 400);
-                    response.end();
-                }
-    
-                break;
+                })
+                .catch(function(error){
+                    response.writeHead(response.statusCode,{'Content-Type':'application/json'});
+                    response.end(error);
+                });
+            }            
+            else
+            {
+                let errorHandler = new ErrorHandler(null);
+                errorHandler.NotFound(response);
+                response.end(errorHandler.body);
+            }
         }
-    });
-    
+     })
+    request.on('error', (error) => {
+        let errorHandler = new ErrorHandler(error);
+        errorHandler.InternalError(response);
+        response.end(errorHandler.body);
+    })
+
+    switch (request.method)
+    {
+        case 'GET':
+            if (peticiones.ComprobarRecurso(recurso, 'reservas'))
+            {
+                peticiones.GetReservas(request, response).then(function (result)
+                {
+                    let errorHandler = new ErrorHandler(null)
+                    errorHandler.OK(response,result);
+                    response.end();
+                })
+                .catch(function(result){
+                    response.writeHead(response.statusCode,{'Content-Type':'application/json'});
+                    response.end(result);
+                });
+            }
+            else if (peticiones.ComprobarRecurso(recurso, 'sucursales'))
+            {
+                peticiones.GetSucursal(request, response).then(function (result)
+                {
+                    let errorHandler = new ErrorHandler(null)
+                    errorHandler.OK(response,result);
+                    response.end();
+                })
+                .catch(function(result){
+                    response.writeHead(response.statusCode,{'Content-Type':'application/json'});
+                    response.end(result);
+                });
+            }
+            else
+            {
+                let errorHandler = new ErrorHandler(null);
+                errorHandler.NotFound(response);
+                response.end(errorHandler.body);
+            }
+
+            break;
+    }
 });
 
 server.listen(puerto, function()
