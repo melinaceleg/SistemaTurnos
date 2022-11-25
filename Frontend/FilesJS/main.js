@@ -32,7 +32,10 @@ function peticionPOST(uri,infobody,callback){
         },
         body: JSON.stringify(infobody)
     })
-    .then(response => {return response.json()})
+    .then(response => {
+        window.statuscode = response.status
+        console.log(response);
+        return response.json()}) 
     .then(jsondata => callback(jsondata))
     .catch(err => console.error(err))
 }
@@ -177,7 +180,7 @@ function muestraSucursales(jsondata){
 function confirmacionCliente(jsondata){
     let email = document.getElementById("email").value
 
-    if(jsondata != ""){
+    if(statuscode == 200){
         var resultado = window.confirm('Estas seguro de confirmar el turno?');
         if (resultado === true) {
             peticionPOST(`${URI_base3}${"/api/reservas/confirmar/"}${window.idReserva}`,{
