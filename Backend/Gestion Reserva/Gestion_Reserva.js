@@ -28,16 +28,12 @@ const server = http.createServer(function (request, response){
     {
         case 'POST':
             if (peticiones.ComprobarRecurso(servicio, 'confirmar'))
-<<<<<<< HEAD
             {
-                console.log("asjd")
+                
                 peticiones.parseRequestAlta(request,manejoTurnos.CargarTurnos(), parametro, enviarNotificacion.enviar,response)
             }
                 else if (peticiones.ComprobarRecurso(servicio, 'solicitar'))
-=======
-                peticiones.parseRequestAlta(request,manejoTurnos.CargarTurnos(), parametro, enviarNotificacion.enviar,response)
-            else if (peticiones.ComprobarRecurso(servicio, 'solicitar'))
->>>>>>> 68543ff (fix verificacion)
+
                 peticiones.parseRequestVerificar(request,manejoTurnos.CargarTurnos(),parametro,response)
             else
             {
@@ -48,11 +44,9 @@ const server = http.createServer(function (request, response){
         case 'GET':
             if (peticiones.ComprobarRecurso(recurso, 'reservas') && parametro != undefined)
             {
-<<<<<<< HEAD
+
                 peticiones.GetReserva(manejoTurnos.CargarTurnos(), parametro).then(function (result)
-=======
-                peticiones.GetReserva(request,manejoTurnos.CargarTurnos(), parametro).then(function (result)
->>>>>>> 68543ff (fix verificacion)
+
                 {
                     peticiones.enviarRespuesta(response, 200);
                     response.end(result);

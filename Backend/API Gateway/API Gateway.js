@@ -26,10 +26,14 @@ server.on('request',(request, response) =>{
                 {
                     let errorHandler = new ErrorHandler(null)
                     errorHandler.OK(response,result);
-                    response.end();
+                    response.end(JSON.stringify(result));
                 })
                 .catch(function(error){
-                    response.writeHead(400,{'Content-Type':'application/json'});
+                    response.writeHead(400,{'Content-Type':'application/json',
+                    'Access-Control-Allow-Origin': '*',
+                    'Access-Control-Allow-Headers':'*',
+                    'Access-Control-Allow-Methods': '*',
+                    'Access-Control-Allow-Credentials' : true});
                     response.end(error);
                 });
             }            
@@ -56,11 +60,19 @@ server.on('request',(request, response) =>{
                 {
                     let errorHandler = new ErrorHandler(null)
                     errorHandler.OK(response,result);
-                    response.writeHead(200,{'Content-Type':'application/json'});
+                    response.writeHead(200,{'Content-Type':'application/json',
+                    'Access-Control-Allow-Origin': '*',
+                    'Access-Control-Allow-Headers':'*',
+                    'Access-Control-Allow-Methods': '*',
+                    'Access-Control-Allow-Credentials' : true});
                     response.end(JSON.stringify(result));
                 })
                 .catch(function(result){
-                    response.writeHead(400,{'Content-Type':'application/json'});
+                    response.writeHead(400,{'Content-Type':'application/json',
+                    'Access-Control-Allow-Origin': '*',
+                    'Access-Control-Allow-Headers':'*',
+                    'Access-Control-Allow-Methods': '*',
+                    'Access-Control-Allow-Credentials' : true});
                     response.end(JSON.stringify(result));
                 });
             }
@@ -73,7 +85,11 @@ server.on('request',(request, response) =>{
                     response.end(JSON.stringify(result));
                 })
                 .catch(function(result){
-                    response.writeHead(400,{'Content-Type':'application/json'});
+                    response.writeHead(400,{'Content-Type':'application/json',
+                    'Access-Control-Allow-Origin': '*',
+                    'Access-Control-Allow-Headers':'*',
+                    'Access-Control-Allow-Methods': '*',
+                    'Access-Control-Allow-Credentials' : true});
                     response.end(JSON.stringify(result));
                 });
             }
@@ -84,6 +100,16 @@ server.on('request',(request, response) =>{
                 response.end(errorHandler.body);
             }
 
+            break;
+            case 'OPTIONS':
+            //Le doy el ok al navegador de que admito cualquier origen
+            response.writeHead(200,{
+                    'Content-Type':'application/json',
+                    'Access-Control-Allow-Origin': '*',
+                    'Access-Control-Allow-Headers':'*',
+                    'Access-Control-Allow-Methods': '*',
+                    'Access-Control-Allow-Credentials' : true})
+            response.end("todo ok")
             break;
     }
 });
