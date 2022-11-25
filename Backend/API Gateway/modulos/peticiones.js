@@ -70,21 +70,20 @@ async function GetTurnosUsuario(data, request, cliente)
     });
 }
 
-async function AltaReserva(request, cliente)
+async function AltaReserva(data, request, cliente)
 {
     /*const data = JSON.stringify({
         userId: d.userId,
         email: d.email
     });*/
     //console.debug(JSON.parse(request.body));
-    console.debug();
+    /*console.debug();
     const size = parseInt(request.headers['content-length'], 10)
     const buffer = Buffer.allocUnsafe(size);
     console.debug(buffer);
-    console.debug(JSON.parse(buffer));
+    console.debug(JSON.parse(buffer));*/
 
-
-    const data = JSON.stringify('');
+    const d = JSON.stringify(data);
     var options = {
         method: request.method, //'POST',
         path: request.url,
@@ -92,17 +91,17 @@ async function AltaReserva(request, cliente)
         port: puertoReservas,
         headers: {
             'Content-Type': 'application/json',
-            'Content-Length': data.length
+            'Content-Length': d.length
         }
     };
 
-    enviar(data, options, cliente);
+    enviar(d, options, cliente);
 
     return 1; 
 }
-async function VerificarTurno(request, cliente)
+async function VerificarTurno(data, request, cliente)
 {
-    const data = JSON.stringify('');//JSON.stringify( userId: d.userId });
+    const d = JSON.stringify(data);//JSON.stringify( userId: d.userId });
     
     var options = {
         method: request.method, //'POST',
@@ -111,10 +110,10 @@ async function VerificarTurno(request, cliente)
         port: puertoReservas,
         headers: {
             'Content-Type': 'application/json',
-            'Content-Length': data.length
+            'Content-Length': d.length
         }
     };
-    enviar(data, options, cliente);
+    enviar(d, options, cliente);
 
     return 1; 
 }
