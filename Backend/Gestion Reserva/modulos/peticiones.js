@@ -118,15 +118,24 @@ async function enviarRespuesta2(response, cod,msg)
 }
 
 
+<<<<<<< HEAD
 async function parseRequestAlta(req,turnos, idReserva, callback,response){
     const size = parseInt(req.headers['content-length'], 10)
     const buffer = Buffer.allocUnsafe(size)
     var pos = 0
       const res= req.on('data', (chunk) => { 
+=======
+async function parseReques(req,turnos, idReserva, callback,response){
+    const size = parseInt(req.headers['content-length'], 10)
+    const buffer = Buffer.allocUnsafe(size)
+    var pos = 0
+      const res=await  req.on('data', (chunk) => { 
+>>>>>>> 0904aab (Alta reservas fix)
           const offset = pos + chunk.length  
           chunk.copy(buffer, pos) 
           pos = offset 
           data = JSON.parse(buffer.toString())
+<<<<<<< HEAD
           console.log(data)
             validateReqAlta(data,turnos, idReserva,callback,response)
       })
@@ -148,6 +157,13 @@ async function parseRequestAlta(req,turnos, idReserva, callback,response){
         } 
 
      async function validateReqAlta(data,turnos, idReserva, callback,response){
+=======
+            validateReq(data,turnos, idReserva,callback,response)
+      })
+    }   
+
+     async function validateReq(data,turnos, idReserva, callback,response){
+>>>>>>> 0904aab (Alta reservas fix)
         const userId=data.userId
         const email=data.email
      
@@ -160,6 +176,7 @@ async function parseRequestAlta(req,turnos, idReserva, callback,response){
         return AltaReserva(turnos, idReserva, data, callback,response)
       }
 
+<<<<<<< HEAD
       async function validateReqVerificar(data,turnos, idReserva,response){
         const userId=data.userId
         if (userId===undefined)
@@ -168,14 +185,20 @@ async function parseRequestAlta(req,turnos, idReserva, callback,response){
         return VerificarTurno(turnos, idReserva,response,userId)
       }
 
+=======
+>>>>>>> 0904aab (Alta reservas fix)
       async function responseError(res){
             res.writeHead(400)
             res.end(JSON.stringify({'mesageError':'Error'}))
       }
 
 module.exports = {
+<<<<<<< HEAD
     parseRequestAlta:parseRequestAlta,
     parseRequestVerificar:parseRequestVerificar,
+=======
+    parseReques:parseReques,
+>>>>>>> 0904aab (Alta reservas fix)
     ComprobarRecurso : ComprobarRecurso,
     AltaReserva : AltaReserva,
     VerificarTurno : VerificarTurno,

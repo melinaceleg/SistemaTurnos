@@ -28,17 +28,19 @@ const server = http.createServer(function (request, response){
     {
         case 'POST':
             if (peticiones.ComprobarRecurso(servicio, 'confirmar'))
+
             {
                 console.log("asjd")
                 peticiones.parseRequestAlta(request,manejoTurnos.CargarTurnos(), parametro, enviarNotificacion.enviar,response)
             }
-                else if (peticiones.ComprobarRecurso(servicio, 'solicitar'))
+            else if (peticiones.ComprobarRecurso(servicio, 'solicitar'))
                 peticiones.parseRequestVerificar(request,manejoTurnos.CargarTurnos(),parametro,response)
-            else
+
             {
                 peticiones.enviarRespuesta(response, 400);
                 response.end();
             }
+
             break;
         case 'GET':
             if (peticiones.ComprobarRecurso(recurso, 'reservas') && parametro != undefined)

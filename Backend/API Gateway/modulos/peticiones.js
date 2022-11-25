@@ -73,8 +73,19 @@ async function GetTurnosUsuario(data, request, cliente)
 
 function AltaReserva(request, datos)
 {
+<<<<<<< HEAD
     let options = {
         hostname: 'localhost',
+=======
+    const ndata = JSON.stringify({
+        userId: d.userId,
+        email: d.email
+    });
+    var options = {
+        method: 'POST',
+        path: request.url,
+    
+>>>>>>> 0904aab (Alta reservas fix)
         port: puertoReservas,
         method: 'POST',
         path: request.url, //ojo aca
