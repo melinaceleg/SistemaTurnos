@@ -80,10 +80,6 @@ async function GetReservas(turnos, parametros)
     }
     if (parametros.dateTime != undefined)
     {        
-        if (parametros.dateTime.length != 2)
-        {        
-            throw 'Error fecha';
-        }
 
         nTurnos = nTurnos.filter(function (t) {
             return t.dateTime.split('T')[0] == parametros.dateTime
