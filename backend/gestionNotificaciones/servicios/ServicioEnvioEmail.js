@@ -6,14 +6,36 @@ const path= '/v3/mail/send'
 const port=443
 
 
+function enviarUnicoEmail(destinatario,asunto,cuerpo,resSer){
+  var data = JSON.stringify({
+    'personalizations': 
+            [{'to':[{"email":destinatario}]}],
+            'from': {'email': 'ivovucetic95@gmail.com'},
+            'subject': asunto,
+            'content': [{'type': 'text/plain', value: cuerpo}]      
+});
 
-function enviar(emails,asunto,msg,resSer){
+const options = {
+    hostname: hostname,
+    port: port,
+    path: path,
+    method: 'POST',
+    headers: {
+        'Authorization': 'Bearer '+ 'token' ,
+        'Content-Type': 'application/json',
+        'Content-Length': Buffer.byteLength(data)
+    }
+  };
+  return send(options,data,resSer)
+}
+
+function enviarListaEmails(destinatarios,asunto,cuerpo,resSer){
       var data = JSON.stringify({
         'personalizations': 
-                [{'to':emails}],
+                [{'to':destinatarios}],
                 'from': {'email': process.env.USER_SEND_GRID},
                 'subject': asunto,
-                'content': [{'type': 'text/plain', value: msg}]      
+                'content': [{'type': 'text/plain', value: cuerpo}]      
     });
 
     const options = {
@@ -50,4 +72,5 @@ function enviar(emails,asunto,msg,resSer){
  
   }
   }
-    exports.enviar = enviar
+    exports.enviarUnicoEmail = enviarUnicoEmail
+    exports.enviarListaEmails = enviarListaEmails

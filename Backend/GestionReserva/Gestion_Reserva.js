@@ -9,7 +9,7 @@ const enviarNotificacion = require('./modulos/enviarNotificacion');
 
 //manejoTurnos.GuardarTurnos(manejoTurnos.CrearJSON(20, 2022, 09, 02, 10, 00, 30));
 
-let turnos = manejoTurnos.CargarTurnos();
+//let turnos = manejoTurnos.CargarTurnos();
 /*let turnos;
 manejoTurnos.CargarTurnos().then(function (result)
 {
@@ -28,27 +28,10 @@ const server = http.createServer(function (request, response){
     {
         case 'POST':
             if (peticiones.ComprobarRecurso(servicio, 'confirmar'))
-            {
-                peticiones.AltaReserva(turnos, parametro, data, enviarNotificacion.enviar).then(function (result)
-                {
-                    peticiones.enviarRespuesta(response, 200);
-                    response.end(result);
-                }).catch(function(result){
-                    peticiones.enviarRespuesta(response, 400);
-                    response.end(result);
-                });
-            }
-            else if (peticiones.ComprobarRecurso(servicio, 'solicitar') && servicio == undefined)
-            {
-                peticiones.VerificarTurno(turnos, parametro).then(function (result)
-                {
-                    peticiones.enviarRespuesta(response, 200);
-                    response.end(result);
-                }).catch(function(result){
-                    peticiones.enviarRespuesta(response, 400);
-                    response.end(result);
-                });
-            } else
+                peticiones.parseRequestAlta(request,manejoTurnos.CargarTurnos(), parametro, enviarNotificacion.enviar,response)
+            else if (peticiones.ComprobarRecurso(servicio, 'solicitar'))
+                peticiones.parseRequestVerificar(request,manejoTurnos.CargarTurnos(),parametro,response)
+            else
             {
                 peticiones.enviarRespuesta(response, 400);
                 response.end();
@@ -57,7 +40,7 @@ const server = http.createServer(function (request, response){
         case 'GET':
             if (peticiones.ComprobarRecurso(recurso, 'reservas') && parametro != undefined)
             {
-                peticiones.GetReserva(turnos, parametro).then(function (result)
+                peticiones.GetReserva(manejoTurnos.CargarTurnos(), parametro).then(function (result)
                 {
                     peticiones.enviarRespuesta(response, 200);
                     response.end(result);
@@ -69,7 +52,7 @@ const server = http.createServer(function (request, response){
             else if (peticiones.ComprobarRecurso(recurso, 'reservas'))
             {
                 query = url.parse(request.url, true).query;
-                peticiones.GetReservas(turnos, query).then(function (result)
+                peticiones.GetReservas(manejoTurnos.CargarTurnos(), query).then(function (result)
                 {
                     peticiones.enviarRespuesta(response, 200);
                     response.end(result);

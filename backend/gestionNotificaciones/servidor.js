@@ -41,13 +41,13 @@ function parseRequestAndSend(req,res){
       }   
 
         function validateReq(data,res){
-          const emails=data.to
+          const destinatario=data.destinatario
           const asunto=data.asunto
-          const msg=data.msg 
-          if (emails===undefined|| asunto===undefined||msg===undefined){
+          const cuerpo=data.cuerpo 
+          if (destinatario===undefined|| asunto===undefined||cuerpo===undefined){
             res.writeHead(422)
             res.end(JSON.stringify({'mesageError':'Error de parseo'}))
           }
          else
-          return enviar.enviar(data.to,data.asunto,data.msg,res)
+          return enviar.enviarUnicoEmail(destinatario,asunto,cuerpo,res)
         }
