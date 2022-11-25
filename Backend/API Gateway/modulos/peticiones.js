@@ -15,7 +15,7 @@ function AltaReserva(request, datos)
         hostname: 'localhost',
         port: puertoReservas,
         method: 'POST',
-        path: request.url, //ojo aca
+        path: request.url,
         headers: { 'Content-Type': 'application/json','Content-Length': datos.length  }
 
       }
