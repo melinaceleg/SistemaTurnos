@@ -3,14 +3,16 @@ const URI_base = 'http://localhost:8000'
 const URI_base2 = 'http://localhost:4000'
 const URI_base3 = 'http://localhost:6000'
 const URI_cartes = 'https://cartes.io'
-const userId = 2
+const apk = "eyJpdiI6InhzOGxKSlpZSlRQSDZVc2ZuSTlVVHc9PSIsInZhbHVlIjoiaWp6azVFK0xPUnFaY3RNYTJPMUZ2cjhSNDE5aGs2b1cwaHlrMlhiT2FNSkN5WFhrU0ZFVU5SUzY3c0crdXdMcXpaRkxocDJSc0lWbFg0MFF0bkFsZ2hmc09wM0VkTGI0T0pXQUp5SUpuSEN5R0pNaGh4S2NNc1B4cXRDT0NUVkUiLCJtYWMiOiJmMGU1M2JjYmZiZjhjZTBkYzY3NmEzZjFlMTBlZDgyMjA3MGFiY2ZmM2IyNmI0MmFlMTkwZTQ5NzZhOTUwNjdhIiwidGFnIjoiIn0%3D"
+const userId = 1
 
 //Cargo un lote de prueba para las sucursales que puede elegir el cliente
+/*
 const sucursales = [{"branchId":1,"lat":56.12,"lng":45.23,"name":"Constitucion"},   
                     {"branchId":2,"lat":23.12,"lng":91.53,"name":"Tejedor"},
                     {"branchId":3,"lat":1.12,"lng":89.3,"name":"Centro"}]
 
-
+*/
 //PETICIONES
 function peticionGET(uri,callback){
     fetch(uri,{
@@ -22,6 +24,7 @@ function peticionGET(uri,callback){
     })
     .then(response =>{return response.json()})
     .then(jsondata => {
+        window.sucursales = jsondata
         console.log(jsondata)
         callback(jsondata)})
     .catch(err => console.error(err))
@@ -41,32 +44,110 @@ function peticionPOST(uri,infobody,callback){
     .catch(err => console.error(err))
 }
 
+function peticionPOSTC(uri,callback,method){
+    fetch(uri,{
+        method: method,
+        mode: "cors",
+        headers: {
+            "Accept": "application/json",
+            "Authorization": apk
+        },
+    })
+    .then(response =>{return response.json()})
+    .then(jsondata => callback(jsondata))
+    .catch(err => console.error(err))
+}
+
 function peticionGETC(uri, callback){
     fetch(uri,{
         method: "GET",
         mode: "cors",
         headers: {
             "Accept": "application/json",
-        }
+            "Authorization": apk
+        },
     })
     .then(response =>{return response.json()})
-    .then(jsondata => {
-        console.log(jsondata)
-        callback(jsondata)})
-    .catch(err => console.error(err))
+    .then(jsondata =>callback(jsondata))
+    .catch(err =>{ 
+        console.error(err)
+        //Como no tengo el recurso creado, hago un nuevo mapa
+        peticionPOSTC(`${URI_cartes}${"/api/maps?title=SistemaTurnos&slug=turnos&description=Representalassucursalesdeunaclinica&privacy=public&users_can_create_markers=yes"}`,muestraMapa, "POST")    
+    }
+        )
 }
 
 //Cuando se cargue la pagina lo primero que hago es traerme las sucursales disponibles con un get
 addEventListener("load", () =>{  
    peticionGET(`${URI_base}${"/sucursales"}`, muestraSucursales)
+   //Me traigo el mapa de cartes
+   peticionGETC(`${URI_cartes}${"/api/maps?withmine=true&title=SistemaTurnos"}`, muestraMapa)
 })
 
-function muestraMapa(json){
-    let frame = document.createElement('iframe')
-    frame.width = "100%"
-    frame.height = "400"
-    frame.innerHTML = 
-    document.getElementById("col_mapa").appendChild(frame)  
+
+function actualizaMarcadores(marcadores,uuid){
+    //Caso en el que no tengo marcadores, caso de que el mapa fue eliminado por completo
+    if(marcadores.data == "[]"){
+        console.log("No hay marcadores en el mapa")
+        for(sucursal in sucursales){
+            let lat = sucursales[sucursal].lat
+            let lng = sucursales[sucursal].lng
+            let description = sucursales[sucursal].name
+            console.log("lat:",lat,"lng:",lng)
+            peticionPOSTC(`${URI_cartes}${"/api/maps/"}${uuid}${"/markers?lat="}${lat}${"&lng="}${lng}${"&description="}${description}${"&category_name="}${description}`, null, "POST")
+        }
+    }
+    else{
+        //Elimino si hay algun marcador que ya no forma parte de las sucursales disponibles
+        //O agrago en el caso de que falte alguno
+        console.log("Si hay marcadores en el mapa")
+        //Recorro por sucursal, si los marcadores no tienen la sucursal creo el nuevo marcador
+        for(let suc in sucursales){
+            if(!(infoMarc.has(sucursales[suc].name))){
+                lat = sucursales[suc].lat
+                lng = sucursales[suc].lng
+                description = sucursales[suc].name
+                peticionPOSTC(`${URI_cartes}${"/api/maps/"}${uuid}${"/markers?lat="}${lat}${"&lng="}${lng}${"&description="}${description}${"&category_name="}${description}`, null, "POST")
+            }
+        }
+        //Recorro por marcador, si hay algun marcador que ya no forma parte de las sucursales lo elimino
+        for(let marcador in marcadores){
+            if(!(infoSuc.has(marcadores[marcador].description))){
+                console.log("El nombre del marcador es:", marcadores[marcador].description)
+                console.log("El id del marcador es:", marcadores[marcador].id)
+                peticionPOSTC(`${URI_cartes}${"/api/maps/"}${uuid}${"/markers/"}${marcadores[marcador].id}`, null, "DELETE")     
+            }
+        }
+    }
+}
+
+function muestraMapa(jsondata){
+    const uuid = jsondata.data[0].uuid
+    const fuente = `${"https://app.cartes.io/maps/"}${uuid}${"/embed?type=map"}`
+    const uri = `${URI_cartes}${"/api/maps/"}${uuid}${"/markers"}`
+    let idFrame = document.getElementById("mapa")
+    //Hago este fetch para saber los marcadores que tiene el mapa, y poder actualizarlos en caso de no tener todos los marcadores de las sucursales
+    fetch(uri,{
+        method: "GET",
+        mode: "cors",
+        headers: {
+            "Accept": "application/json",
+            "Authorization": apk
+        },
+    })
+    .then(response =>{return response.json()})
+    .then(jsondata =>{
+        window.infoMarc = new Map()
+        for(let marc in jsondata){
+            infoMarc.set(jsondata[marc].description,jsondata[marc].id)    
+        } 
+        actualizaMarcadores(jsondata,uuid)
+        idFrame.setAttribute("src",fuente)
+    })
+    .catch(err =>{ 
+        console.error(err)
+    }
+        )
 }
 
 //Habilito boton para buscar turno, siempre y cuando tenga todo completo
