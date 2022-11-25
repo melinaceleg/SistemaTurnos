@@ -23,6 +23,7 @@ const server = http.createServer(function (request, response){
     recurso = dir[2];
     servicio = dir[3];
     parametro = dir[4];
+    
 
     switch (request.method)
     {
@@ -38,9 +39,9 @@ const server = http.createServer(function (request, response){
             }
             break;
         case 'GET':
-            if (peticiones.ComprobarRecurso(recurso, 'reservas') && parametro != undefined)
+            if (peticiones.ComprobarRecurso(recurso, 'reservas') && servicio != undefined)
             {
-                peticiones.GetReserva(manejoTurnos.CargarTurnos(), parametro).then(function (result)
+                peticiones.GetReserva(manejoTurnos.CargarTurnos(), servicio).then(function (result)
                 {
                     peticiones.enviarRespuesta(response, 200);
                     response.end(result);
@@ -66,9 +67,8 @@ const server = http.createServer(function (request, response){
                 peticiones.enviarRespuesta(response, 400);
                 response.end();
             }
-
             break;
-        case 'OPTIONS':
+            case 'OPTIONS':
             //Le doy el ok al navegador de que admito cualquier origen
             response.writeHead(200,{
                     'Content-Type':'application/json',
@@ -77,7 +77,7 @@ const server = http.createServer(function (request, response){
                     'Access-Control-Allow-Methods': '*',
                     'Access-Control-Allow-Credentials' : true})
             response.end("todo ok")
-            break;      
+            break;
     }
 });
 

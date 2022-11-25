@@ -39,7 +39,7 @@ function peticionPOST(uri,infobody,callback){
         },
         body: JSON.stringify(infobody)
     })
-    .then(response =>{return response.json()})
+    .then(response => {return response.json()})
     .then(jsondata => callback(jsondata))
     .catch(err => console.error(err))
 }
@@ -182,51 +182,48 @@ function muestraSucursales(jsondata){
 }
 
 function confirmacionCliente(jsondata){
-    //Si el header me da codigo 200 esta ok para la confirmacion
     let email = document.getElementById("email").value
 
-    if(jsondata.headers == 200){
-        //Creo ventanaConfirmacion
-        peticionPOST(`${URI_base2}${"/api/reservas/confirmar/:"}${window.idReserva}`,{
-           "userId":userId,
-           "email":email
-        },confirmacionCliente)
+    if(jsondata != ""){
+        var resultado = window.confirm('Estas seguro de confirmar el turno?');
+        if (resultado === true) {
+            peticionPOST(`${URI_base2}${"/api/reservas/confirmar/"}${window.idReserva}`,{
+                "userId":userId,
+                "email":email
+             },confirmacionCliente)
+        } else { 
+            window.alert('Puede elegir otro turno');
+        } 
     }
 }
 
 function escuchaReservas(reserva){
     //Este es el idReserva a enviar para la verificacion
     window.idReserva = reserva.id;
-    peticionPOST(`${URI_base2}${"/api/reservas/solicitar/:"}${window.idReserva}`,{"userId":userId},confirmacionCliente)
-    eliminaTurnos()
+    console.log("El idReserva:", idReserva)
+    peticionPOST(`${URI_base2}${"/api/reservas/solicitar/"}${window.idReserva}`,{"userId":userId},confirmacionCliente)
 }
 
 //Muestro los turnos por pantalla
 function muestraTurnos(turnos){
-    /*
-    const turnos = [{"dataTime":"2022-10-01", "branchId":1},
-                    {"dataTime":"2022-10-01", "branchId":2},
-                    {"dataTime":"2022-10-01", "branchId":2},
-                    {"dataTime":"2022-10-01", "branchId":1},
-                    {"dataTime":"2022-10-01", "branchId":1},
-                    {"dataTime":"2022-10-01", "branchId":3},
-                    {"dataTime":"2022-10-01", "branchId":4},
-                    {"dataTime":"2022-10-01", "branchId":1}]
-    */
+    //Limpio la lista
+    let id_lista = document.getElementById("lista_turnos")
+    let id_divF = document.getElementById("fila_turnos")
+    id_divF.removeChild(id_lista)
+
+    //Creo una nueva lista
+    let item_ul = document.createElement('ul')
+    item_ul.className = "list-group list-group-horizontal-xxl"
+    item_ul.id = "lista_turnos"
+    id_divF.appendChild(item_ul)
     for(let turno in turnos){
+        let date = turnos[turno].dateTime.split("T")
         let item = document.createElement('li')
         item.className = "list-group-item d-flex justify-content-between align-items-center"
         item.id = turno
-        item.innerHTML = `${"Fecha = "}${turnos[turno].dataTime}${"Sucursal = "}${turnos[turno].branchId}${"\n"}`
-        item.innerHTML += '<button id="'+turno+'" class="btn btn-primary btn-sm" type "button" onclick="escuchaReservas(this)">Reservar</button>'  
+        item.innerHTML = `${"Fecha = "}${date[0]}${"<br>"}${"Sucursal = "}${turnos[turno].branchId}${"\n"}`
+        item.innerHTML += '<button id="'+turnos[turno].idReserva+'" class="btn btn-primary btn-sm" type "button" onclick="escuchaReservas(this)">Reservar</button>'  
         document.getElementById("lista_turnos").appendChild(item)
-        /*
-        let buttonitem =  document.createElement('button')
-        buttonitem.className = "btn btn-primary btn-sm"
-        buttonitem.id = turno
-        buttonitem.innerHTML = "Reservar"
-        document.getElementById(item.id).appendChild(buttonitem)
-        */
     }  
 }
 
