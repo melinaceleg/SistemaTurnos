@@ -16,7 +16,6 @@ async function AltaReserva(turnos, idReserva, data, callback,response)
         turnos[indice].email = data.email;
         turnos[indice].userId = data.userId;
         turnos[indice].status = 2;
-        //AgregarTurno(turnos, CrearTurno(idReserva, "2022-09-02T19:58:10.406Z", d.userId, d.email, 3));
         manejoTurnos.GuardarTurnos(turnos);
         console.debug('turno agregado!');
         callback(turnos[indice])
@@ -28,12 +27,11 @@ async function AltaReserva(turnos, idReserva, data, callback,response)
         enviarRespuesta2(response,400,'turno ocupado o status incorrecto');
     }
 }
-async function VerificarTurno(turnos, idReserva)
+async function VerificarTurno(turnos, idReserva,response,userId)
 {
     let i = 0;
     let len = turnos.length;
     let result = 0;
-    //d = JSON.parse(data);
     if (idReserva <= 0)
     {        
         throw 'idReserva erroneo';
@@ -48,15 +46,26 @@ async function VerificarTurno(turnos, idReserva)
         await function() {
             if (turnos[i].status == 0)
             {
+
+                turnos[i].userId = userId;
                 turnos[i].status = 1;
                 result = 1;
+                manejoTurnos.GuardarTurnos(turnos);
             }
-        }
+
+
+        }()
     }
 
-    return JSON.stringify({
-        res: result
-    });
+   if(result==1)
+        enviarRespuesta2(response,200,JSON.stringify({
+            res: 1
+        }))
+    else
+        enviarRespuesta2(response,400,JSON.stringify({
+            errorMessage: "Error al verrificar turno"
+        }))
+        
 }
 async function GetReservas(turnos, parametros)
 {
@@ -109,7 +118,7 @@ async function enviarRespuesta2(response, cod,msg)
 }
 
 
-async function parseReques(req,turnos, idReserva, callback,response){
+async function parseRequestAlta(req,turnos, idReserva, callback,response){
     const size = parseInt(req.headers['content-length'], 10)
     const buffer = Buffer.allocUnsafe(size)
     var pos = 0
@@ -118,11 +127,26 @@ async function parseReques(req,turnos, idReserva, callback,response){
           chunk.copy(buffer, pos) 
           pos = offset 
           data = JSON.parse(buffer.toString())
-            validateReq(data,turnos, idReserva,callback,response)
+            validateReqAlta(data,turnos, idReserva,callback,response)
       })
     }   
 
-     async function validateReq(data,turnos, idReserva, callback,response){
+
+
+    async function parseRequestVerificar(req,turnos, idReserva,response){
+        const size = parseInt(req.headers['content-length'], 10)
+        const buffer = Buffer.allocUnsafe(size)
+        var pos = 0
+          const res=await  req.on('data', (chunk) => { 
+              const offset = pos + chunk.length  
+              chunk.copy(buffer, pos) 
+              pos = offset 
+              data = JSON.parse(buffer.toString())
+                validateReqVerificar(data,turnos, idReserva,response)
+          })
+        } 
+
+     async function validateReqAlta(data,turnos, idReserva, callback,response){
         const userId=data.userId
         const email=data.email
      
@@ -135,13 +159,22 @@ async function parseReques(req,turnos, idReserva, callback,response){
         return AltaReserva(turnos, idReserva, data, callback,response)
       }
 
+      async function validateReqVerificar(data,turnos, idReserva,response){
+        const userId=data.userId
+        if (userId===undefined)
+          return enviarRespuesta2(response,422,"Error de parseo")
+       else
+        return VerificarTurno(turnos, idReserva,response,userId)
+      }
+
       async function responseError(res){
             res.writeHead(400)
             res.end(JSON.stringify({'mesageError':'Error'}))
       }
 
 module.exports = {
-    parseReques:parseReques,
+    parseRequestAlta:parseRequestAlta,
+    parseRequestVerificar:parseRequestVerificar,
     ComprobarRecurso : ComprobarRecurso,
     AltaReserva : AltaReserva,
     VerificarTurno : VerificarTurno,
