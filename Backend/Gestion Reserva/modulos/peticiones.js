@@ -53,17 +53,29 @@ async function VerificarTurno(turnos, idReserva,response,userId)
                 result = 1;
                 manejoTurnos.GuardarTurnos(turnos);
             }
+<<<<<<< HEAD
 
 
         }()
     }
+=======
+
+
+        }()
+    }
+
+>>>>>>> 68543ff (fix verificacion)
    if(result==1)
         enviarRespuesta2(response,200,JSON.stringify({
             res: 1
         }))
     else
         enviarRespuesta2(response,400,JSON.stringify({
+<<<<<<< HEAD
             msg: "Error al verrificar turno"
+=======
+            errorMessage: "Error al verrificar turno"
+>>>>>>> 68543ff (fix verificacion)
         }))
         
 }
@@ -123,7 +135,10 @@ async function parseRequestAlta(req,turnos, idReserva, callback,response){
           chunk.copy(buffer, pos) 
           pos = offset 
           data = JSON.parse(buffer.toString())
+<<<<<<< HEAD
           console.log(data)
+=======
+>>>>>>> 68543ff (fix verificacion)
             validateReqAlta(data,turnos, idReserva,callback,response)
       })
     }   
@@ -159,7 +174,11 @@ async function parseRequestAlta(req,turnos, idReserva, callback,response){
       async function validateReqVerificar(data,turnos, idReserva,response){
         const userId=data.userId
         if (userId===undefined)
+<<<<<<< HEAD
           return enviarRespuesta2(response,422,JSON.stringify({'msg':'Error de parseo'}))
+=======
+          return enviarRespuesta2(response,422,"Error de parseo")
+>>>>>>> 68543ff (fix verificacion)
        else
         return VerificarTurno(turnos, idReserva,response,userId)
       }
