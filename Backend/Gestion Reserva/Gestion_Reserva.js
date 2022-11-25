@@ -30,7 +30,6 @@ const server = http.createServer(function (request, response){
             if (peticiones.ComprobarRecurso(servicio, 'confirmar'))
 
             {
-                console.log("asjd")
                 peticiones.parseRequestAlta(request,manejoTurnos.CargarTurnos(), parametro, enviarNotificacion.enviar,response)
             }
             else if (peticiones.ComprobarRecurso(servicio, 'solicitar'))
