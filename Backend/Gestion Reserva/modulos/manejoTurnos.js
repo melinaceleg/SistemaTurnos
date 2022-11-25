@@ -86,7 +86,7 @@ function GuardarTurnos(turnos)
 {
     jsonData = JSON.stringify(turnos);
     
-    fs.writeFile("turnos.json", jsonData, function(err) {
+    fs.writeFile('turnos.json', jsonData, function(err) {
         if (err) {
             console.log(err);
         }

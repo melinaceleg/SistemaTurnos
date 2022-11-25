@@ -2,21 +2,21 @@ const puerto = '9000';
 
 const http = require('http');
 
-function enviar(turno)
+async function enviar(turno)
 {    
     destinatario = turno.email;
     asunto = "turno agregado";
     cuerpo = turno.dateTime;
 
-    const data = JSON.stringify({
+    const data = await JSON.stringify({
         destinatario: destinatario,
         asunto: asunto,
         cuerpo : cuerpo
     });
     var options = {
-        //hostname: 'localhost',
+        hostname: 'localhost',
         method: 'POST',
-        path: '/notificacion',
+        path: '/notificaciones',
 
         port: puerto,
         headers: {
@@ -24,24 +24,31 @@ function enviar(turno)
             'Content-Length': Buffer.byteLength(data)
         }
       };
+      send(options,data)
+    }
 
-      const request = http.request(options, function (response) {
 
-        /*let body = ''
-      
-        console.log('Status Code:', response.statusCode);
-      
-        response.on('data', (chunk) => {
-          body += chunk;
-        });
-      
-        response.on('end', () => {
-            console.log('Body: ', JSON.parse(body));
-        });*/
-      });
-      
-      request.write(data);
-      request.end();
+async function send(options,data){
+  var req = http.request(options, (res) => {
+      res.on('data', (d) => {
+      process.stdout.write(d);
+      anldeResponse(res.statusCode)
+    })
+
+  });
+  req.on('error', function(err) {
+    console.log("Error de conexion!")
+});
+    req.write(data);
+    req.end();   
 }
+  async function hanldeResponse(statusCode){
+  if (statusCode==200)
+    return console.log('Notificaion de turno enviada')
+else
+     return console.log('Error al notificar turno')
+    
+  }
+
 
 exports.enviar = enviar;

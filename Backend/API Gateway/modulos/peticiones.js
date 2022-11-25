@@ -2,13 +2,14 @@ const puertoReservas = '4000';
 const puertoSucursales = '3000';
 
 const http = require('http');
-
+const { ErrorHandler } = require("./ErrorHandler");
 
 async function enviar(data, options, cliente)
 {
     try
     {
         const request = http.request(options, function (response) {
+            
                 
             response.on('data', (chunk) => {
               enviarRespuesta(cliente, response.statusCode, chunk);
@@ -70,36 +71,49 @@ async function GetTurnosUsuario(data, request, cliente)
     });
 }
 
-async function AltaReserva(request, cliente)
+function AltaReserva(request, datos)
 {
-    /*const data = JSON.stringify({
-        userId: d.userId,
-        email: d.email
-    });*/
-    //console.debug(JSON.parse(request.body));
-    console.debug();
-    const size = parseInt(request.headers['content-length'], 10)
-    const buffer = Buffer.allocUnsafe(size);
-    console.debug(buffer);
-    console.debug(JSON.parse(buffer));
-
-
-    const data = JSON.stringify('');
-    var options = {
-        method: request.method, //'POST',
-        path: request.url,
-    
+    let options = {
+        hostname: 'localhost',
         port: puertoReservas,
-        headers: {
-            'Content-Type': 'application/json',
-            'Content-Length': data.length
-        }
-    };
+        method: 'POST',
+        path: request.url, //ojo aca
+        headers: { 'Content-Type': 'application/json','Content-Length': datos.length  }
 
-    enviar(data, options, cliente);
+      }
 
-    return 1; 
+      return new Promise((resolve, reject) => {
+        let body='';
+        let request = http.request(options, (response) =>
+         {
+       
+
+          response.on('data', (data) => 
+           {
+            body += data;
+           })
+
+          response.on('end', () => {
+
+            if (response.statusCode == 200) {
+              resolve(JSON.parse(body))
+            } else {
+                let error = body;
+              reject(error);
+            }
+          })
+        });
+
+        request.on('error', (error) => {
+            reject(error);
+        });
+        console.log(datos);
+        request.write(datos)
+        request.end();
+    })
 }
+
+
 async function VerificarTurno(request, cliente)
 {
     const data = JSON.stringify('');//JSON.stringify( userId: d.userId });
